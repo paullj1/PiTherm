@@ -185,7 +185,10 @@ def check_occupancy(db) :
 # end check_occupancy()
 
 def update_pins(db, mode, fan_on, setpoint, indoor_temp) :
-	variance = float(get_value_from_id(db, VARIANCE_ID));
+	if get_value_from_id(db, HEAT_STATUS_ID) == 'off' and get_value_from_id(db, COOL_STATUS_ID) == 'off' :
+		variance = float(get_value_from_id(db, VARIANCE_ID));
+	else :
+		variance = 0
 
 	if mode == 'cool' :
 		if indoor_temp > (setpoint + variance) : cool(db, True)
@@ -208,6 +211,9 @@ def update_pins(db, mode, fan_on, setpoint, indoor_temp) :
 		
 # Close GPIO and database connections
 def cleanup(signal, frame):
+	global db
+	heat(db, False)
+	cool(db, False)
 	io.cleanup()
 	db.close()
 	sys.exit(0)
@@ -218,14 +224,7 @@ def cleanup(signal, frame):
 #                              #
 ################################
 
-# Variables
-occupied = False # Starts false, if true, it will be quickly updated
-override = False
-fan_on = False
-mode = 'cool'
-setpoint = 71
-indoor_temp = 70
-outdoor_temp = 80
+# Database Connection
 db = sql.connect('localhost','thermostat','password','thermostat')
 
 setup_io()
@@ -242,3 +241,6 @@ while True:
 	update_pins(db, mode, fan_on, setpoint, indoor_temp)
 	time.sleep(5)	
 # end while
+
+io.cleanup();
+db.close();
