@@ -1,70 +1,40 @@
 #!/usr/bin/python
 # Checks for Phone presence
-
-import select
-import sys
-import pybonjour
 import datetime
+import signal
 import _mysql as sql
+import subprocess
+import os
+import time
 
-regtype = '_apple-mobdev2._tcp'
-timeout  = 5
-resolved = []
+import libthermostat as therm
+#from therm import get_value_from_id, set_value_in_db, LAST_OCCUPIED_ID, PJ_PHONE_ID, KT_PHONE_ID
 
-# When callback happens, resolve here
-def resolve_callback(sdRef, flags, interfaceIndex, errorCode, fullname,
-                     hosttarget, port, txtRecord):
-	if errorCode == pybonjour.kDNSServiceErr_NoError:
-		justName = hosttarget.split(".", 1)
-		#print 'Host: ' + justName[0]
-		# Update Last Occupied in the DB
-		db = sql.connect('localhost','thermostat','password','thermostat')
-		query = "UPDATE  `thermostat`.`status` SET  `value` =  '"+str(datetime.datetime.now())[:19]+"' WHERE  `status`.`id` =7;"
-		db.query(query)
-		db.close()
-	#end if
-#end def
+# PLIST Constants
+#LAST_OCCUPIED_ID = 7
+#PJ_PHONE_ID = 15
+#KT_PHONE_ID = 16
 
+#  Functions
+def cleanup(signal, frame) :
+	global db
+	db.close()
+	sys.exit(0)
 
-def browse_callback(sdRef, flags, interfaceIndex, errorCode, serviceName,
-					regtype, replyDomain):
-	if errorCode != pybonjour.kDNSServiceErr_NoError:
-		return
-
-	#print 'Time: ' + str(datetime.datetime.now())
-	resolve_sdRef = pybonjour.DNSServiceResolve(0,
-						    interfaceIndex,
-						    serviceName,
-						    regtype,
-						    replyDomain,
-						    resolve_callback)
-
-	try:
-		while not resolved:
-			ready = select.select([resolve_sdRef], [], [], timeout)
-			if resolve_sdRef not in ready[0]:
-				break
-			pybonjour.DNSServiceProcessResult(resolve_sdRef)
-		else:
-			resolved.pop()
-	finally:
-		resolve_sdRef.close()
-#end def
+def PktRcvd(db) :
+	therm.set_value_in_db(db, therm.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
 
 
-# Main
-browse_sdRef = pybonjour.DNSServiceBrowse(regtype = regtype, callBack = browse_callback)
+#  Main Program 
+db = sql.connect('localhost','thermostat','password','thermostat')
+signal.signal(signal.SIGINT, cleanup)
 
-# Look for keyboard interrupt
-try:
-	try:
-		while True:
-			ready = select.select([browse_sdRef], [], [])
-			if browse_sdRef in ready[0]:
-				pybonjour.DNSServiceProcessResult(browse_sdRef)
-		#end while
-	#end try
-	except KeyboardInterrupt:
-		pass
-finally:
-	browse_sdRef.close()
+while True :
+	pj_id = therm.get_value_from_id(db, therm.PJ_PHONE_ID)
+	kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
+	tcp_filter = "ether src "+pj_id+" or ether src "+kt_id
+
+	FNULL = open(os.devnull, 'w')
+	pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", "1", "-p", tcp_filter], stderr=FNULL)
+	if pkt : PktRcvd(db)
+	time.sleep(10)	
