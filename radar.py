@@ -34,7 +34,12 @@ while True :
 	kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
 	tcp_filter = "ether src "+pj_id+" or ether src "+kt_id
 
-	FNULL = open(os.devnull, 'w')
-	pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", "1", "-p", tcp_filter], stderr=FNULL)
-	if pkt : PktRcvd(db)
+	try : 
+		FNULL = open(os.devnull, 'w')
+		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", "1", "-p", tcp_filter], stderr=FNULL)
+		FNULL.close()
+		if pkt : PktRcvd(db)
+	except :
+		print "Error opening /dev/null or executing tcpdump... trying again on next loop"
+
 	time.sleep(10)	
