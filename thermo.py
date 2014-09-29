@@ -22,6 +22,11 @@ db = sql.connect('localhost','thermostat','password','thermostat')
 therm.setup_io()
 signal.signal(signal.SIGINT, cleanup)
 while True:
+
+	# Make Sure DB connection is still alive
+	if not db.open :
+		db = sql.connect('localhost','thermostat','password','thermostat')
+
 	# Get variables from sensors/input
 	occupied = therm.check_occupancy(db)
 	indoor_temp = therm.get_temp(db)
@@ -30,6 +35,7 @@ while True:
 	override = therm.override_status(db)
 	setpoint = therm.get_setpoint(db,mode,occupied,override)
 
+	# Update output based on current state
 	therm.update_pins(db, mode, fan_on, setpoint, indoor_temp)
 	time.sleep(5)	
 # end while

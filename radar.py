@@ -6,6 +6,7 @@ import _mysql as sql
 import subprocess
 import os
 import time
+import sys
 
 import libthermostat as therm
 #from therm import get_value_from_id, set_value_in_db, LAST_OCCUPIED_ID, PJ_PHONE_ID, KT_PHONE_ID
@@ -24,7 +25,6 @@ def cleanup(signal, frame) :
 def PktRcvd(db) :
 	therm.set_value_in_db(db, therm.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
 
-
 #  Main Program 
 db = sql.connect('localhost','thermostat','password','thermostat')
 signal.signal(signal.SIGINT, cleanup)
@@ -38,8 +38,12 @@ while True :
 		FNULL = open(os.devnull, 'w')
 		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", "1", "-p", tcp_filter], stderr=FNULL)
 		FNULL.close()
+		
+		if not db.open :
+			db = sql.connect('localhost','thermostat','password','thermostat')
 		if pkt : PktRcvd(db)
+
 	except :
-		print "Error opening /dev/null or executing tcpdump... trying again on next loop"
+		print str(datetime.datetime.now()) + ": Radar Error: ", sys.exc_info()[0]
 
 	time.sleep(10)	

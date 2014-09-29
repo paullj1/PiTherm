@@ -69,7 +69,7 @@ def get_value_from_id(db, db_id) :
 		value = result.fetch_row()
 		return str(value[0][0])
 	except : # Try again next time
-		print "Error getting db_id: '"+str(db_id)+"'";
+		print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'";
 		return ""
 
 def set_value_in_db(db, db_id, value) :
@@ -77,7 +77,7 @@ def set_value_in_db(db, db_id, value) :
 		query = "UPDATE  `thermostat`.`status` SET  `value` =  '"+str(value)+"' WHERE  `status`.`id` ="+str(db_id)+";"
 		db.query(query)
 	except : # Try again next time
-		print "Error setting db_id: '"+str(db_id)+"' to '"+value+"'";
+		print str(datetime.datetime.now()) + ": Error setting db_id: '"+str(db_id)+"' to '"+value+"'";
 
 def fan_status(db) :
 	status = get_value_from_id(db, FAN_AUTO_ID)
