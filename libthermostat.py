@@ -2,6 +2,7 @@
 import RPi.GPIO as io
 import _mysql as sql
 import datetime
+import sys
 
 # Constants
 HEAT_PIN = 23
@@ -55,9 +56,11 @@ def get_temp(db) :
 		indoor_temp = indoor_temp * 1.8 + 32
 	
 		# Write it out to database
-		set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp);
+		set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
 	except :
-		indoor_temp = get_value_from_id(db, CURRENT_TEMP_ID);
+		indoor_temp = get_value_from_id(db, CURRENT_TEMP_ID)
+		print str(datetime.datetime.now()) + ": Error getting indoor temperature... trying agin"
+		print 															 "     - More details: ", sys.exc_info()[0]
 
 	return indoor_temp
 
@@ -69,7 +72,8 @@ def get_value_from_id(db, db_id) :
 		value = result.fetch_row()
 		return str(value[0][0])
 	except : # Try again next time
-		print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'";
+		print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'"
+		print 															 "     - More details: ", sys.exc_info()[0]
 		return ""
 
 def set_value_in_db(db, db_id, value) :
@@ -77,7 +81,8 @@ def set_value_in_db(db, db_id, value) :
 		query = "UPDATE  `thermostat`.`status` SET  `value` =  '"+str(value)+"' WHERE  `status`.`id` ="+str(db_id)+";"
 		db.query(query)
 	except : # Try again next time
-		print str(datetime.datetime.now()) + ": Error setting db_id: '"+str(db_id)+"' to '"+value+"'";
+		print str(datetime.datetime.now()) + ": Error setting db_id: '"+str(db_id)+"' to '"+value+"'"
+		print 															 "     - More details: ", sys.exc_info()[0]
 
 def fan_status(db) :
 	status = get_value_from_id(db, FAN_AUTO_ID)
@@ -141,10 +146,10 @@ def heat(db,status) :
 
 	if status :
 		io.output(HEAT_PIN, io.HIGH)
-		set_value_in_db(db, HEAT_STATUS_ID, 'on');
+		set_value_in_db(db, HEAT_STATUS_ID, 'on')
 	else :
 		io.output(HEAT_PIN, io.LOW)
-		set_value_in_db(db, HEAT_STATUS_ID, 'off');
+		set_value_in_db(db, HEAT_STATUS_ID, 'off')
 
 # Turn cooling on/off
 def cool(db,status) :
@@ -153,36 +158,36 @@ def cool(db,status) :
 
 	if status :
 		io.output(COOL_PIN, io.HIGH)
-		set_value_in_db(db, COOL_STATUS_ID, 'on');
+		set_value_in_db(db, COOL_STATUS_ID, 'on')
 	else :
 		io.output(COOL_PIN, io.LOW)
-		set_value_in_db(db, COOL_STATUS_ID, 'off');
+		set_value_in_db(db, COOL_STATUS_ID, 'off')
 
 # Turn fan on/auto
 def fan(db,status) :
 	if status :
 		io.output(FAN_PIN, io.HIGH)
-		set_value_in_db(db, FAN_STATUS_ID, 'on');
+		set_value_in_db(db, FAN_STATUS_ID, 'on')
 	else :
 		io.output(FAN_PIN, io.LOW)
-		set_value_in_db(db, FAN_STATUS_ID, 'off');
+		set_value_in_db(db, FAN_STATUS_ID, 'off')
 
 # Check to see if anyone is home
 def check_occupancy(db) :
 	# Get last occupied
-	result = get_value_from_id(db, LAST_OCCUPIED_ID);
+	result = get_value_from_id(db, LAST_OCCUPIED_ID)
 	last_occupied = datetime.datetime.strptime(result, '%Y-%m-%d %H:%M:%S')
 	if last_occupied < (datetime.datetime.now() - datetime.timedelta(minutes=OCCUPIED_TIMEOUT)):
-		set_value_in_db(db, OCCUPIED_ID, 'False');
+		set_value_in_db(db, OCCUPIED_ID, 'False')
 		return False
 
-	set_value_in_db(db, OCCUPIED_ID, 'True');
+	set_value_in_db(db, OCCUPIED_ID, 'True')
 	return True
 # end check_occupancy()
 
 def update_pins(db, mode, fan_on, setpoint, indoor_temp) :
 	if get_value_from_id(db, HEAT_STATUS_ID) == 'off' and get_value_from_id(db, COOL_STATUS_ID) == 'off' :
-		variance = float(get_value_from_id(db, VARIANCE_ID));
+		variance = float(get_value_from_id(db, VARIANCE_ID))
 	else :
 		variance = 0
 

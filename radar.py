@@ -25,6 +25,10 @@ def cleanup(signal, frame) :
 def PktRcvd(db) :
 	therm.set_value_in_db(db, therm.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
 
+def CheckDb(db) :
+	if not db.open :
+		db = sql.connect('localhost','thermostat','password','thermostat')
+
 #  Main Program 
 db = sql.connect('localhost','thermostat','password','thermostat')
 signal.signal(signal.SIGINT, cleanup)
@@ -32,15 +36,19 @@ signal.signal(signal.SIGINT, cleanup)
 while True :
 	pj_id = therm.get_value_from_id(db, therm.PJ_PHONE_ID)
 	kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
-	tcp_filter = "ether src "+pj_id+" or ether src "+kt_id
+	if pj_id == "" or kt_id == "" :
+		print str(datetime.datetime.now()) + ": Radar Error: couldn't get IDs from database, trying again next time..."
+		CheckDb(db)
+		continue
+
+	tcp_filter = "ether src "+str(pj_id)+" or ether src "+str(kt_id)
 
 	try : 
 		FNULL = open(os.devnull, 'w')
 		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", "1", "-p", tcp_filter], stderr=FNULL)
 		FNULL.close()
 		
-		if not db.open :
-			db = sql.connect('localhost','thermostat','password','thermostat')
+		CheckDb(db)
 		if pkt : PktRcvd(db)
 
 	except :
