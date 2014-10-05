@@ -22,10 +22,6 @@ def cleanup(signal, frame) :
 def PktRcvd(db) :
 	therm.set_value_in_db(db, therm.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
 
-def CheckDb(db) :
-	if not db.open :
-		db = sql.connect('localhost','thermostat','password','thermostat')
-
 #  Main Program 
 db = sql.connect('localhost','thermostat','password','thermostat')
 signal.signal(signal.SIGINT, cleanup)
@@ -45,7 +41,9 @@ while True :
 		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", MON_CHANNEL, "-p", tcp_filter], stderr=FNULL)
 		FNULL.close()
 		
-		CheckDb(db)
+		if not db.open :
+			db = sql.connect('localhost','thermostat','password','thermostat')
+
 		if pkt : PktRcvd(db)
 
 	except :
