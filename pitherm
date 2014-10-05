@@ -1,0 +1,92 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          pitherm
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Scans for phones on the network and controls thermostat accordingly
+### END INIT INFO
+ 
+RADAR=radar
+PITHERM=pitherm
+RUNAS=root
+ 
+PITHERMPIDFILE=/var/run/pitherm.pid
+RADARPIDFILE=/var/run/radar.pid
+LOGFILE=/var/log/pitherm.log
+ 
+start() {
+  if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
+    echo 'Service already running' >&2
+    return 1
+  fi
+  echo 'Starting service…' >&2
+
+	echo 'Starting radar...' >&2
+  local CMD="$RADAR &> \"$LOGFILE\" & echo \$!"
+  su -c "$CMD" $RUNAS > "$RADARPIDFILE"
+	echo 'radar started' >&2
+
+	echo 'Starting pitherm' >&2
+  local CMD="$PITHERM &> \"$LOGFILE\" & echo \$!"
+  su -c "$CMD" $RUNAS > "$PITHERMPIDFILE"
+	echo 'pitherm started' >&2
+
+  echo 'Service started' >&2
+}
+ 
+stop() {
+  if [ ! -f "$RADARPIDFILE" ] || ! kill -0 $(cat "$RADARPIDFILE"); then
+    echo 'radar not running' >&2
+		radar_running='false'
+  fi
+  if [ ! -f "$PITHERMPIDFILE" ] || ! kill -0 $(cat "$PITHERMPIDFILE"); then
+    echo 'pitherm not running' >&2
+		pitherm_running='false'
+  fi
+
+	if [ "$radar_running" != "false" ]; then
+  	echo 'Stopping radar…' >&2
+  	kill -15 $(cat "$RADARPIDFILE") && rm -f "$RADARPIDFILE"
+	fi
+
+	if [ "$pitherm_running" != "false" ]; then
+  	echo 'Stopping pitherm…' >&2
+  	kill -15 $(cat "$PITHERMPIDFILE") && rm -f "$PITHERMPIDFILE"
+	fi
+
+  echo 'Service stopped' >&2
+}
+ 
+uninstall() {
+  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
+  local SURE
+  read SURE
+  if [ "$SURE" = "yes" ]; then
+    stop
+    rm -f "$RADARPIDFILE"
+    rm -f "$PITHERMPIDFILE"
+    echo "Notice: log file is not be removed: '$LOGFILE'" >&2
+    update-rc.d -f pitherm remove
+    rm -fv "$0"
+  fi
+}
+ 
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|uninstall}"
+esac
