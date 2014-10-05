@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # Checks for Phone presence
 import datetime
 import signal
@@ -9,12 +9,9 @@ import time
 import sys
 
 import libthermostat as therm
-#from therm import get_value_from_id, set_value_in_db, LAST_OCCUPIED_ID, PJ_PHONE_ID, KT_PHONE_ID
 
-# PLIST Constants
-#LAST_OCCUPIED_ID = 7
-#PJ_PHONE_ID = 15
-#KT_PHONE_ID = 16
+# Constants
+MON_CHANNEL = "1"
 
 #  Functions
 def cleanup(signal, frame) :
@@ -33,19 +30,19 @@ def CheckDb(db) :
 db = sql.connect('localhost','thermostat','password','thermostat')
 signal.signal(signal.SIGINT, cleanup)
 
+pj_id = therm.get_value_from_id(db, therm.PJ_PHONE_ID)
+kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
+if pj_id == "" or kt_id == "" :
+	print str(datetime.datetime.now()) + ": Radar Error: couldn't get IDs from database, trying again next time..."
+	db.close()
+	sys.exit(0)
+
+tcp_filter = "ether src "+str(pj_id)+" or ether src "+str(kt_id)
+
 while True :
-	pj_id = therm.get_value_from_id(db, therm.PJ_PHONE_ID)
-	kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
-	if pj_id == "" or kt_id == "" :
-		print str(datetime.datetime.now()) + ": Radar Error: couldn't get IDs from database, trying again next time..."
-		CheckDb(db)
-		continue
-
-	tcp_filter = "ether src "+str(pj_id)+" or ether src "+str(kt_id)
-
 	try : 
 		FNULL = open(os.devnull, 'w')
-		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", "1", "-p", tcp_filter], stderr=FNULL)
+		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", MON_CHANNEL, "-p", tcp_filter], stderr=FNULL)
 		FNULL.close()
 		
 		CheckDb(db)
