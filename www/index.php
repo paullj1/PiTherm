@@ -6,6 +6,7 @@
 <script src="js/jquery-mob.js"></script>
 <script src="js/functions.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <script>
 
 $(document).ready(function() {
