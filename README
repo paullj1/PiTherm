@@ -1,6 +1,8 @@
+
 PiTherm
-Copyright 2014 - Paul Jordan (paullj1[at]gmail[dot]com)
+
 ========================================================================================
+Copyright 2014 - Paul Jordan (paullj1[at]gmail[dot]com)
 Thermostat back-end and front-end for Raspberry Pi with presence detection
 
 Dependencies:
