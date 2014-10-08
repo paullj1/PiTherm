@@ -22,7 +22,7 @@ $(document).ready(function() {
 <body>
 <div data-role="page" id="home">
   <div data-role="header" data-position="fixed" >
-    <h1>Jordan's Thermostat</h1>
+    <h1>PiTherm</h1>
 		<a href="#settings" data-transition="slideup" data-role="button" data-icon="grid" class="ui-btn-right">Settings</a>
   </div>
   <div data-role="content">
