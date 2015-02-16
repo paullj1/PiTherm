@@ -11,7 +11,7 @@ import sys
 import libthermostat as therm
 
 # Constants
-MON_CHANNEL = "1"
+MON_CHANNEL = "11"
 
 #  Functions
 def cleanup(signal, frame) :
@@ -26,6 +26,9 @@ def PktRcvd(db) :
 db = sql.connect('localhost','thermostat','password','thermostat')
 signal.signal(signal.SIGINT, cleanup)
 
+#  Obtain phone MAC addresses... must do it before loop since db connection tends to time out while the app
+#	 blocks waiting for tcpdump to return (for several hours while I'm at work).  This means that if those
+#	 values are updated in the DB, the service must be restarted.
 pj_id = therm.get_value_from_id(db, therm.PJ_PHONE_ID)
 kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
 if pj_id == "" or kt_id == "" :
