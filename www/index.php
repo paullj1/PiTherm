@@ -2,6 +2,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="css/jquery-mob.css" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="js/jquery.js"></script>
 <script src="js/jquery-mob.js"></script>
 <script src="js/functions.js"></script>
@@ -46,10 +47,10 @@ $(document).ready(function() {
 					<div id="current-setpoint-container"></div>
 					<div id="current-temp-container"></div>
 				</td>
-				<td style="width:120px"> <button id="increase-setpoint">Up</button> </td>
+				<td style="width:120px"> <button id="increase-setpoint" class="therm-buttons">Up</button> </td>
 			</tr>
 			<tr>
-    		<td> <button id="decrease-setpoint">Down</button> </td>
+    		<td> <button id="decrease-setpoint" class="therm-buttons">Down</button> </td>
 			</tr>
 		</table>
 
@@ -81,7 +82,6 @@ $(document).ready(function() {
     <a href="#" data-role="button" data-rel="back" data-icon="back" class="ui-btn-right">Back</a>
   </div>
   <div data-role="content">
-	<form method="post" action="settings.php">
 		<!-- Override -->
 		<label for="flip-1">Override:</label> </br>
 		<select name="flip-1" class="settings-form-sliders" id="override-switch" data-role="slider">
@@ -108,9 +108,37 @@ $(document).ready(function() {
 			<option value="auto">Auto</option>
 			<option value="on">On</option>
 		</select>  <br />
-	</form>
+
+		<!-- Setpoints -->
+		<table style="width:350px;height:100%">
+			<tr><td>Occupied Day Heat:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-day-heat" class="therm-buttons"></a></td></tr>
+			<tr><td>Occupied Night Heat:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-night-heat" class="therm-buttons"></a></td></tr>
+			<tr><td>Unoccupied Heat:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="unoccupied-heat" class="therm-buttons"></a></td></tr>
+			<tr><td>Occupied Day Cool:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-day-cool" class="therm-buttons"></a></td></tr>
+			<tr><td>Occupied Night Cool:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-night-cool" class="therm-buttons"></a></td></tr>
+			<tr><td>Unoccupied Cool:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="unoccupied-cool" class="therm-buttons"></a></td></tr>
+		</table>
   </div>
+
+	<!-- Popup Setpoint Changer -->
+	<div data-role="popup" id="setpoint-changer">
+  	<h2>Change Setpoint:</h2>
+			<table style="width:350px">
+					<tr>
+					<td rowspan=2> 
+						<div id="change-setpoint-label"></div>
+						<div id="change-setpoint-container"></div>
+					</td>
+					<td style="width:120px"> <button id="mod-setpoint-up" class="therm-buttons">Up</button> </td>
+				</tr>
+				<tr>
+    			<td> <button id="mod-setpoint-down" class="therm-buttons">Down</button> </td>
+				</tr>
+			</table>
+	</div>
+
 </div>
+
 
 </body>
 </html>
