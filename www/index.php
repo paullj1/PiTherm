@@ -2,7 +2,6 @@
 <html>
 <head>
 <link rel="stylesheet" href="css/jquery-mob.css" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="js/jquery.js"></script>
 <script src="js/jquery-mob.js"></script>
 <script src="js/functions.js"></script>
