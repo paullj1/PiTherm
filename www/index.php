@@ -110,28 +110,54 @@ $(document).ready(function() {
 
 		<!-- Setpoints -->
 		<table style="width:350px;height:100%">
-			<tr><td>Occupied Day Heat:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-day-heat" class="therm-buttons"></a></td></tr>
-			<tr><td>Occupied Night Heat:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-night-heat" class="therm-buttons"></a></td></tr>
-			<tr><td>Unoccupied Heat:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="unoccupied-heat" class="therm-buttons"></a></td></tr>
-			<tr><td>Occupied Day Cool:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-day-cool" class="therm-buttons"></a></td></tr>
-			<tr><td>Occupied Night Cool:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="occupied-night-cool" class="therm-buttons"></a></td></tr>
-			<tr><td>Unoccupied Cool:</td><td><a href="#setpoint-changer" data-rel="popup" data-role="button" id="unoccupied-cool" class="therm-buttons"></a></td></tr>
+			<tr>
+				<td>Occupied Day Heat:</td>
+				<td><a href="#setpoint-changer" data-rel="popup" data-role="button" data-position-to="window" data-inline="true"
+						 style="width:80px;padding:10px" id="occupied-day-heat" class="therm-buttons"></a></td>
+			</tr>
+			<tr>
+				<td style="width:60%">Occupied Night Heat:</td>
+				<td><a href="#setpoint-changer" data-rel="popup" data-role="button" data-position-to="window" data-inline="true" 
+							style="width:80px;padding:10px" id="occupied-night-heat" class="therm-buttons"></a></td>
+			</tr>
+			<tr>
+				<td>Unoccupied Heat:</td>
+				<td><a href="#setpoint-changer" data-rel="popup" data-role="button" data-position-to="window" data-inline="true" 
+							style="width:80px;padding:10px" id="unoccupied-heat" class="therm-buttons"></a></td>
+			</tr>
+			<tr>
+				<td>Occupied Day Cool:</td>
+				<td><a href="#setpoint-changer" data-rel="popup" data-role="button" data-position-to="window" data-inline="true" 
+							style="width:80px;padding:10px" id="occupied-day-cool" class="therm-buttons"></a></td>
+			</tr>
+			<tr>
+				<td>Occupied Night Cool:</td>
+				<td><a href="#setpoint-changer" data-rel="popup" data-role="button" data-position-to="window" data-inline="true" 
+							style="width:80px;padding:10px" id="occupied-night-cool" class="therm-buttons"></a></td>
+			</tr>
+			<tr>
+				<td>Unoccupied Cool:</td>
+				<td><a href="#setpoint-changer" data-rel="popup" data-role="button" data-position-to="window" data-inline="true" 
+							style="width:80px;padding:10px" id="unoccupied-cool" class="therm-buttons"></a></td>
+			</tr>
 		</table>
   </div>
 
 	<!-- Popup Setpoint Changer -->
-	<div data-role="popup" id="setpoint-changer">
-  	<h2>Change Setpoint:</h2>
-			<table style="width:350px">
-					<tr>
-					<td rowspan=2> 
-						<div id="change-setpoint-label"></div>
-						<div id="change-setpoint-container"></div>
-					</td>
-					<td style="width:120px"> <button id="mod-setpoint-up" class="therm-buttons">Up</button> </td>
+	<div data-role="popup" id="setpoint-changer" data-overlay-theme="a" style="width:350px">
+			<table width="90%" align="center">
+        <tr>
+  	      <td colspan="2" align="center"><h2>Change Setpoint</h2></td>
 				</tr>
 				<tr>
-    			<td> <button id="mod-setpoint-down" class="therm-buttons">Down</button> </td>
+				  <td align="left"> <div id="change-setpoint-label"></div> </td>
+				  <td width="100px" align="right"> <div id="change-setpoint-container"></div> </td>
+				</tr>
+			</table>
+			<table width="90%" align="center">
+				<tr>
+    		  <td align="center" style="width:50%"> <button id="mod-setpoint-down" class="therm-buttons">Down</button> </td>
+				  <td align="center" style="width:50%"> <button id="mod-setpoint-up" class="therm-buttons">Up</button> </td>
 				</tr>
 			</table>
 	</div>
