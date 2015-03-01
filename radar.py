@@ -11,7 +11,7 @@ import sys
 import libthermostat as therm
 
 # Constants
-MON_CHANNEL = "11"
+NUM_PACKETS = "1"
 
 #  Functions
 def cleanup(signal, frame) :
@@ -41,7 +41,7 @@ tcp_filter = "ether src "+str(pj_id)+" or ether src "+str(kt_id)
 while True :
 	try : 
 		FNULL = open(os.devnull, 'w')
-		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", MON_CHANNEL, "-p", tcp_filter], stderr=FNULL)
+		pkt = subprocess.check_output(["tcpdump", "-i", "mon0", "-c", NUM_PACKETS, "-p", tcp_filter], stderr=FNULL)
 		FNULL.close()
 		
 		if not db.open :
