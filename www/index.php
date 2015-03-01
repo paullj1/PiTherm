@@ -78,7 +78,7 @@ $(document).ready(function() {
 <div data-role="page" id="settings">
   <div data-role="header" data-position="fixed" >
     <h1>Settings</h1>
-    <a href="#" data-role="button" data-rel="back" data-icon="back" class="ui-btn-right">Back</a>
+    <a href="#" data-role="button" data-transition="slidedown" data-rel="back" data-icon="back" class="ui-btn-right">Back</a>
   </div>
   <div data-role="content">
 		<!-- Override -->
