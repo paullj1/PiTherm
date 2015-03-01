@@ -8,8 +8,8 @@ function fetch_array_db($result) {
   return mysqli_fetch_array($result);
 }
 
-function get_tempurature($con) {
-
+function fetch_assoc_db($result) {
+	return mysql_fetch_assoc($result);
 }
 
 ?>

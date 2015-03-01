@@ -149,7 +149,7 @@ function get_settings_data() {
 }
 
 function populate_settings(data) {
-	console.dir(data); // for debug
+	//console.dir(data); // for debug
 	if (data.fan == "on") $("#fan-switch").val('on').slider("refresh");
 	else $("#fan-switch").val('auto').slider("refresh");
 
