@@ -32,6 +32,7 @@ OCCUPIED_ID = 18
 HEAT_STATUS_ID = 19
 COOL_STATUS_ID = 20
 FAN_STATUS_ID = 21
+BSSID_ADDR = 22
 
 # Init GPIO
 def setup_io() :
@@ -58,9 +59,10 @@ def get_temp(db) :
 		# Write it out to database
 		set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
 	except :
-		indoor_temp = get_value_from_id(db, CURRENT_TEMP_ID)
-		print str(datetime.datetime.now()) + ": Error getting indoor temperature... trying agin"
+		indoor_temp = -1;
+		print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 		print 															 "     - More details: ", sys.exc_info()[0]
+		
 
 	return indoor_temp
 

@@ -30,6 +30,7 @@ while True:
 	# Get variables from sensors/input
 	occupied = therm.check_occupancy(db)
 	indoor_temp = therm.get_temp(db)
+	if (indoor_temp == -1) : break
 	mode = therm.get_value_from_id(db, therm.MODE_ID)
 	fan_on = therm.fan_status(db)
 	override = therm.override_status(db)
