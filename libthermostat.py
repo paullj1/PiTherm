@@ -47,7 +47,7 @@ def get_temp(db) :
 
 	# Read temp from sensor
 	try : 
-		temp_file = open("/sys/bus/w1/devices/28-00042202faff/w1_slave") 
+		temp_file = open("/sys/bus/w1/devices/28-021467d9ddff/w1_slave") 
 		raw_text = temp_file.read()
 		temp_file.close()
 		second_line = raw_text.split("\n")[1]
