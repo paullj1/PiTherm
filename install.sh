@@ -1,12 +1,13 @@
 #!/bin/bash
 # Install PiTherm
 
-# Setting up 1wire sensor
-modprobe w1-gpio
-modprobe w1-therm
+# Installing boot init script
+cp init_pitherm.sh /etc/init.d/
+chmod +x /etc/init.d/init_pitherm.sh
+update-rc.d init_pitherm defaults 100
 
-# Configuring wlan0 to run in monitor mode on boot
-echo 'airmon-ng start wlan0' >> /etc/rc.local
+# 1wire config
+echo 'dtoverlay=w1-gpio,gpiopin=4' >> /boot/config.txt
 
 # Installing radar
 cp radar.py /usr/local/bin/radar
@@ -25,3 +26,4 @@ update-rc.d pitherm defaults
 
 # Installing web front-end
 cp -ur ./www/* /var/www/
+

@@ -24,7 +24,8 @@ var HEAT_STATUS_ID = 19
 var COOL_STATUS_ID = 20
 var FAN_STATUS_ID = 21
 
-var LOCATION = "Scott Air Force Base"
+var LOCATION = "Dayton"
+var APIKEY="INSERT YOURS HERE"
 var LOCAL_REFRESH_RATE = 10000
 var WEATHER_REFRESH_RATE = 60000
 var setpoint = 0;
@@ -67,6 +68,7 @@ function get_weather() {
 		dataType : "json",
 		data : {
 			q: LOCATION,
+			APPID: APIKEY,
 			units: "imperial"
 		},
 		success : update_weather,

@@ -10,9 +10,11 @@
  
 RADAR=radar
 PITHERM=pitherm
+PITHERMBUTTON=therm_reset_button
 RUNAS=root
  
 PITHERMPIDFILE=/var/run/pitherm.pid
+PITHERMBUTTONPIDFILE=/var/run/pithermbutton.pid
 RADARPIDFILE=/var/run/radar.pid
 LOGFILE=/var/log/pitherm.log
  
@@ -33,6 +35,11 @@ start() {
   su -c "$CMD" $RUNAS > "$PITHERMPIDFILE"
 	echo 'pitherm started' >&2
 
+	echo 'Starting pitherm button' >&2
+  local CMD="$PITHERMBUTTON &> \"$LOGFILE\" & echo \$!"
+  su -c "$CMD" $RUNAS > "$PITHERMBUTTONPIDFILE"
+	echo 'pitherm button started' >&2
+
   echo 'Service started' >&2
 }
  
@@ -45,6 +52,10 @@ stop() {
     echo 'pitherm not running' >&2
 		pitherm_running='false'
   fi
+  if [ ! -f "$PITHERMBUTTONPIDFILE" ] || ! kill -0 $(cat "$PITHERMBUTTONPIDFILE"); then
+    echo 'pithermbutton not running' >&2
+		pithermbutton_running='false'
+  fi
 
 	if [ "$radar_running" != "false" ]; then
   	echo 'Stopping radar…' >&2
@@ -54,6 +65,11 @@ stop() {
 	if [ "$pitherm_running" != "false" ]; then
   	echo 'Stopping pitherm…' >&2
   	kill -15 $(cat "$PITHERMPIDFILE") && rm -f "$PITHERMPIDFILE"
+	fi
+
+	if [ "$pithermbutton_running" != "false" ]; then
+  	echo 'Stopping pithermbutton…' >&2
+  	kill -15 $(cat "$PITHERMBUTTONPIDFILE") && rm -f "$PITHERMBUTTONPIDFILE"
 	fi
 
   echo 'Service stopped' >&2
@@ -67,6 +83,7 @@ uninstall() {
     stop
     rm -f "$RADARPIDFILE"
     rm -f "$PITHERMPIDFILE"
+    rm -f "$PITHERMBUTTONPIDFILE"
     echo "Notice: log file is not be removed: '$LOGFILE'" >&2
     update-rc.d -f pitherm remove
     rm -fv "$0"
