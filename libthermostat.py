@@ -5,6 +5,8 @@ import datetime
 import sys
 
 # Constants
+ON = io.LOW
+OFF = io.HIGH
 HEAT_PIN = 23
 FAN_PIN = 24
 COOL_PIN = 25
@@ -147,10 +149,10 @@ def heat(db,status) :
 	fan(db,status)
 
 	if status :
-		io.output(HEAT_PIN, io.HIGH)
+		io.output(HEAT_PIN, ON)
 		set_value_in_db(db, HEAT_STATUS_ID, 'on')
 	else :
-		io.output(HEAT_PIN, io.LOW)
+		io.output(HEAT_PIN, OFF)
 		set_value_in_db(db, HEAT_STATUS_ID, 'off')
 
 # Turn cooling on/off
@@ -159,19 +161,19 @@ def cool(db,status) :
 	fan(db,status)
 
 	if status :
-		io.output(COOL_PIN, io.HIGH)
+		io.output(COOL_PIN, ON)
 		set_value_in_db(db, COOL_STATUS_ID, 'on')
 	else :
-		io.output(COOL_PIN, io.LOW)
+		io.output(COOL_PIN, OFF)
 		set_value_in_db(db, COOL_STATUS_ID, 'off')
 
 # Turn fan on/auto
 def fan(db,status) :
 	if status :
-		io.output(FAN_PIN, io.HIGH)
+		io.output(FAN_PIN, ON)
 		set_value_in_db(db, FAN_STATUS_ID, 'on')
 	else :
-		io.output(FAN_PIN, io.LOW)
+		io.output(FAN_PIN, OFF)
 		set_value_in_db(db, FAN_STATUS_ID, 'off')
 
 # Check to see if anyone is home
