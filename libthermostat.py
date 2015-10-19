@@ -3,6 +3,7 @@ import RPi.GPIO as io
 import _mysql as sql
 import datetime
 import sys
+import time
 
 # Constants
 ON = io.LOW
@@ -46,26 +47,43 @@ def setup_io() :
 
 # Read temperature
 def get_temp(db) :
-
-	# Read temp from sensor
-	try : 
-		temp_file = open("/sys/bus/w1/devices/28-021467d9ddff/w1_slave") 
-		raw_text = temp_file.read()
-		temp_file.close()
-		second_line = raw_text.split("\n")[1]
-		temp_data = second_line.split(" ")[9]
-		indoor_temp = float(temp_data[2:]) 
-		indoor_temp /= 1000
-		indoor_temp = indoor_temp * 1.8 + 32
 	
-		# Write it out to database
-		set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
-	except :
-		indoor_temp = -1;
-		print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
-		print 															 "     - More details: ", sys.exc_info()[0]
+	# Try to read 5 times
+	count = 0
+	# Read temp from sensor
+	while True :
+		try : 
+			temp_file = open("/sys/bus/w1/devices/28-021467d9ddff/w1_slave") 
+			raw_text = temp_file.read()
+			temp_file.close()
+			second_line = raw_text.split("\n")[1]
+			temp_data = second_line.split(" ")[9]
+			indoor_temp = float(temp_data[2:]) 
+			indoor_temp /= 1000
+			indoor_temp = indoor_temp * 1.8 + 32
 		
+			# Write it out to database
+			set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
+		except IOError:
+			if count > 5 :
+				indoor_temp = -1;
+				print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
+				print 															 "     - More details: ", sys.exc_info()[0]
+				break
+			else :
+				count += 1
+				call(["modprobe", "w1-gpio"])
+				call(["modprobe", "w1-therm"])
+				time.sleep(3)	
+	
+		except :
+			indoor_temp = -1;
+			print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
+			print 															 "     - More details: ", sys.exc_info()[0]
+			break
 
+		# Got the temperature without failing
+		break	
 	return indoor_temp
 
 def get_value_from_id(db, db_id) :
