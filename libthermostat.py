@@ -41,9 +41,9 @@ BSSID_ADDR = 22
 def setup_io() :
 	io.setmode(io.BCM)	
 	io.setwarnings(False)
-	io.setup(HEAT_PIN, io.OUT)
-	io.setup(FAN_PIN, io.OUT)
-	io.setup(COOL_PIN, io.OUT)
+	io.setup(HEAT_PIN, io.OUT, initial=OFF)
+	io.setup(FAN_PIN, io.OUT, initial=OFF)
+	io.setup(COOL_PIN, io.OUT, initial=OFF)
 
 # Read temperature
 def get_temp(db) :
