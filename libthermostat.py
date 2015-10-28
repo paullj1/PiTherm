@@ -4,6 +4,7 @@ import _mysql as sql
 import datetime
 import sys
 import time
+import subprocess
 
 # Constants
 ON = io.LOW
@@ -72,8 +73,8 @@ def get_temp(db) :
 				break
 			else :
 				count += 1
-				call(["modprobe", "w1-gpio"])
-				call(["modprobe", "w1-therm"])
+				subprocess.call(["modprobe", "w1-gpio"])
+				subprocess.call(["modprobe", "w1-therm"])
 				time.sleep(3)	
 	
 		except :
