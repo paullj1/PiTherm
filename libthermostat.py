@@ -164,9 +164,6 @@ def get_setpoint(db,mode,occupied,override) :
 
 # Turn heat on/off
 def heat(db,status) :
-	# Turn Fan on/off with heating
-	fan(db,status)
-
 	if status :
 		io.output(HEAT_PIN, ON)
 		set_value_in_db(db, HEAT_STATUS_ID, 'on')
@@ -176,9 +173,6 @@ def heat(db,status) :
 
 # Turn cooling on/off
 def cool(db,status) :
-	# Turn Fan on/off with cooling
-	fan(db,status)
-
 	if status :
 		io.output(COOL_PIN, ON)
 		set_value_in_db(db, COOL_STATUS_ID, 'on')
