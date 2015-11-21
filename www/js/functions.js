@@ -25,7 +25,7 @@ var COOL_STATUS_ID = 20
 var FAN_STATUS_ID = 21
 
 var LOCATION = "Dayton"
-var APIKEY="INSERT YOURS HERE"
+var APIKEY="c6394f21b38d5084accd5263ec07a2c1"
 var LOCAL_REFRESH_RATE = 10000
 var WEATHER_REFRESH_RATE = 60000
 var setpoint = 0;
@@ -40,6 +40,36 @@ var modify_setpoint_value = 0;
 $(document).ready(function() {
 	get_weather();
 	get_local();
+
+	// Settings Stuff
+	get_settings_data();
+
+	// Connect Update Functions
+	$(".settings-form-sliders").bind( 'click', function( event ) { 
+		var id = 0;
+		var value = '';
+		if ( event.currentTarget.id == "fan-switch" ) {
+			id = FAN_ID;
+			value = event.currentTarget.checked ? 'on' : 'auto';
+		}
+
+		if ( event.currentTarget.id == "override-switch" ) {
+			id = OVERRIDE_ID;
+			value = event.currentTarget.checked ? 'True' : 'False';
+		}
+
+		if ( id != 0 && value != '')  {
+			set_val_db(id, value);
+			get_local();	
+		}
+	});
+
+	$(".settings-form-radios").bind( "click", function(event) {
+		//console.dir(event); // for debug
+		set_val_db(MODE_ID, event.currentTarget.value);
+		get_settings_data();
+		get_local();
+	});
 });
 
 function get_local() {
@@ -84,15 +114,15 @@ function update_weather(data) {
 
 	$("#weather-city-container").html(data.name);
 	$("#weather-img-container").html("<img src='http://openweathermap.org/img/w/"+data.weather[0].icon+".png'></img>");
-	$("#weather-temp-container").html("<h5>"+data.main.temp+"&deg; F</h5>");
+	$("#weather-temp-container").html("<h5>"+data.main.temp+"º F</h5>");
 	$("#weather-humidity-container").html("Humidity: "+data.main.humidity+" %");
 	$("#weather-wind-container").html("Wind: "+data.wind.speed+" mph");
 }
 
 function update_local(data) {
 	//console.dir(data);
-	$("#current-temp-container").html("<h5>Indoor Temp: "+Math.floor(data.current_temp)+"&deg; F</h5>");
-	$("#current-setpoint-container").html("<h5>Setpoint: "+(setpoint = data.current_setpoint)+"&deg; F</h5>");
+	$("#current-temp-container").html("<h5>Actual: "+Math.floor(data.current_temp)+"º F</h5>");
+	$("#current-setpoint-container").html("<h5>Setpoint: "+(setpoint = data.current_setpoint)+"º F</h5>");
 	$("#current-mode-container").html("Mode: <b>"+data.mode+"</b>");
 	
 	var light = 'off';
@@ -119,35 +149,6 @@ function update_local(data) {
 /*                      */
 /************************/
 
-// Grab variables before page shows
-$(document).on("pagebeforeshow","#settings",function(){ 
-	get_settings_data();
-
-	// Connect Update Functions
-	$(".settings-form-sliders").on( 'check', function( event ) { 
-		var id = 0;
-		var value = '';
-		if ( event.currentTarget.id == "fan-switch" ) {
-			id = FAN_ID;
-			value = event.currentTarget.checked ? 'On' : 'Auto';
-		}
-
-		if ( event.currentTarget.id == "override-switch" ) {
-			id = OVERRIDE_ID;
-			value = event.currentTarget.checked ? 'True' : 'False';
-		}
-
-		if ( id != 0 && value != '') 
-			set_val_db(id, value);
-
-	});
-
-	$(".settings-form-radios").bind( "click", function(event) {
-		console.dir(event); // for debug
-		set_val_db(MODE_ID, event.currentTarget.value);
-	});
-});
-
 function get_settings_data() {
 	$.ajax({
 		type : "POST",
@@ -161,34 +162,38 @@ function get_settings_data() {
 }
 
 function populate_settings(data) {
-	console.dir(data); // for debug
-	if (data.fan == "on") $("#fan-switch").checked = true;
-	else $("#fan-switch").checked = false;
+	//console.dir(data); // for debug
+	if (data.fan == "on") $("#fan-switch").prop("checked", true);
+	else $("#fan-switch").prop("checked", false);
 
-	if (data.override == "True") $("#override-switch").checked = true;
-	else $("#override-switch").checked = false;
+	if (data.override == "True") $("#override-switch").prop("checked", true);
+	else $("#override-switch").prop("checked", false);
 
+
+	$("#mode-selector-heat").removeClass('btn').removeClass('btn-flat');
+	$("#mode-selector-cool").removeClass('btn').removeClass('btn-flat');
+	$("#mode-selector-off").removeClass('btn').removeClass('btn-flat');
 
 	if (data.mode == "heat") {
-		$("#mode-selector-heat").className = $("#mode-selector-heat").className.replace( /(?:^|\s)btn-flat(?!\S)/g , 'btn' )
-		$("#mode-selector-cool").className = $("#mode-selector-cool").className.replace( /(?:^|\s)btn(?!\S)/g , 'btn-flat' )
-		$("#mode-selector-off").className = $("#mode-selector-off").className.replace( /(?:^|\s)btn(?!\S)/g , 'btn-flat' )
+		$("#mode-selector-heat").addClass('btn')
+		$("#mode-selector-cool").addClass('btn-flat')
+		$("#mode-selector-off").addClass('btn-flat')
 	} else if (data.mode == "cool") {
-		$("#mode-selector-heat").className = $("#mode-selector-heat").className.replace( /(?:^|\s)btn(?!\S)/g , 'btn-flat' )
-		$("#mode-selector-cool").className = $("#mode-selector-cool").className.replace( /(?:^|\s)btn-flat(?!\S)/g , 'btn' )
-		$("#mode-selector-off").className = $("#mode-selector-off").className.replace( /(?:^|\s)btn(?!\S)/g , 'btn-flat' )
+		$("#mode-selector-heat").addClass('btn-flat')
+		$("#mode-selector-cool").addClass('btn')
+		$("#mode-selector-off").addClass('btn-flat')
 	} else { // OFF
-		$("#mode-selector-heat").className = $("#mode-selector-heat").className.replace( /(?:^|\s)btn(?!\S)/g , 'btn-flat' )
-		$("#mode-selector-cool").className = $("#mode-selector-cool").className.replace( /(?:^|\s)btn(?!\S)/g , 'btn-flat' )
-		$("#mode-selector-off").className = $("#mode-selector-off").className.replace( /(?:^|\s)btn-flat(?!\S)/g , 'btn' )
+		$("#mode-selector-heat").addClass('btn-flat')
+		$("#mode-selector-cool").addClass('btn-flat')
+		$("#mode-selector-off").addClass('btn')
 	}
 
-	$("#occupied-day-heat").html(data.day_occupied_heat+"&deg; F");
-	$("#occupied-night-heat").html(data.night_occupied_heat+"&deg; F");
-	$("#unoccupied-heat").html(data.unoccupied_heat+"&deg; F");
-	$("#occupied-day-cool").html(data.day_occupied_cool+"&deg; F");
-	$("#occupied-night-cool").html(data.night_occupied_cool+"&deg; F");
-	$("#unoccupied-cool").html(data.unoccupied_cool+"&deg; F");
+	$("#occupied-day-heat").text(data.day_occupied_heat+"º F");
+	$("#occupied-night-heat").text(data.night_occupied_heat+"º F");
+	$("#unoccupied-heat").text(data.unoccupied_heat+"º F");
+	$("#occupied-day-cool").text(data.day_occupied_cool+"º F");
+	$("#occupied-night-cool").text(data.night_occupied_cool+"º F");
+	$("#unoccupied-cool").text(data.unoccupied_cool+"º F");
 }
 
 function get_setpoint(id) {
@@ -210,7 +215,7 @@ function get_setpoint(id) {
 function update_setpoint(data) {
 	//console.dir(data);
 	$("#change-setpoint-label").html("<h5>"+data.label+": </h5>");
-	$("#change-setpoint-container").html("<h5>"+data.value+"&deg; F</h5>");
+	$("#change-setpoint-container").html("<h5>"+data.value+"º F</h5>");
   modify_setpoint_value = data.value; // MESSY! need a better way to do this
 }
 

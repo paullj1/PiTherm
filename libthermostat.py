@@ -206,7 +206,10 @@ def update_pins(db, mode, fan_on, setpoint, indoor_temp) :
 	if get_value_from_id(db, HEAT_STATUS_ID) == 'off' and get_value_from_id(db, COOL_STATUS_ID) == 'off' :
 		variance = float(get_value_from_id(db, VARIANCE_ID))
 	else :
-		variance = 0
+		variance = 1
+
+	# Auto = false
+	fan(db, fan_on)
 
 	if mode == 'cool' :
 		if indoor_temp > (setpoint + variance) : cool(db, True)
@@ -221,8 +224,5 @@ def update_pins(db, mode, fan_on, setpoint, indoor_temp) :
 	if mode == 'off' :
 		heat(db, False)
 		cool(db, False)
-
-	# Auto = false
-	fan(db, fan_on)
 
 # end update_pins

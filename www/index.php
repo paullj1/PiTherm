@@ -27,7 +27,6 @@
   			require_once "constants.php";
   			require_once "thermo_functions.php";
 			?>
-			$(".button-collapse").sideNav();
 			$('.modal-trigger').leanModal();
 		});
 
@@ -37,12 +36,9 @@
 	<nav>
     <div class="nav-wrapper grey darken-1">
       <a href="#!" class="brand-logo">PiTherm</a>
-      <a href="#" data-activates="mobile-nav" class="button-collapse"><i class="material-icons">menu</i></a>
+      <a href="#settings" class="modal-trigger button-collapse"><i class="material-icons">settings</i></a>
       <ul class="right hide-on-med-and-down">
         <li><a class="modal-trigger" href="#settings"><i class="material-icons">settings</i></a></li>
-      </ul>
-      <ul class="side-nav" id="mobile-nav">
-        <li><a class="modal-trigger mdi-settings" href="#settings">Settings</a></li>
       </ul>
     </div>
   </nav>
@@ -103,8 +99,8 @@
     <h4 class="col s12 center-align">Settings</h4>
 
 		<!-- Override -->
-		<h5>Override</h5>
-  	<div class="switch">
+		<h5 class="row">Override</h5>
+  	<div class="row switch">
     	<label>
       	Off
       	<input type="checkbox" id="override-switch" class="settings-form-sliders">
@@ -114,14 +110,14 @@
   	</div>
 
 		<!-- Mode -->
-		<h5>Mode</h5>
-		<button class="waves-effect waves-teal btn-flat settings-form-radios" value="heat" id="mode-selector-heat">Heat</button>
-		<button class="waves-effect waves-teal btn-flat settings-form-radios" value="cool" id="mode-selector-cool">Cool</button>
-		<button class="waves-effect waves-teal btn-flat settings-form-radios" value="off" id="mode-selector-of">Off</button>
+		<h5 class="row">Mode</h5>
+		<button class="waves-effect waves-teal btn-flat settings-form-radios row col s4" value="heat" id="mode-selector-heat">Heat</button>
+		<button class="waves-effect waves-teal btn-flat settings-form-radios row col s4" value="cool" id="mode-selector-cool">Cool</button>
+		<button class="waves-effect waves-teal btn-flat settings-form-radios row col s4" value="off" id="mode-selector-off">Off</button>
 
 		<!-- Fan -->
-		<h5>Fan</h5>
-  	<div class="switch">
+		<h5 class="row">Fan</h5>
+  	<div class="row switch">
     	<label>
       	Off
       	<input type="checkbox" id="fan-switch" class="settings-form-sliders">
@@ -131,56 +127,45 @@
   	</div>
 
 		<!-- Setpoints -->
-		<table style="width:350px;height:100%">
-			<tr>
-				<td>Occupied Day Heat:</td>
-				<td><a class="modal-trigger btn" href="#setpoint-changer" id="occupied-day-heat" class="therm-buttons"></a></td>
-			</tr>
-			<tr>
-				<td style="width:60%">Occupied Night Heat:</td>
-				<td><a class="modal-trigger btn" href="#setpoint-changer" id="occupied-night-heat" class="therm-buttons"></a></td>
-			</tr>
-			<tr>
-				<td>Unoccupied Heat:</td>
-				<td><a class="modal-trigger btn" href="#setpoint-changer" id="unoccupied-heat" class="therm-buttons"></a></td>
-			</tr>
-			<tr>
-				<td>Occupied Day Cool:</td>
-				<td><a class="modal-trigger btn" href="#setpoint-changer" id="occupied-day-cool" class="therm-buttons"></a></td>
-			</tr>
-			<tr>
-				<td>Occupied Night Cool:</td>
-				<td><a class="modal-trigger btn" href="#setpoint-changer" id="occupied-night-cool" class="therm-buttons"></a></td>
-			</tr>
-			<tr>
-				<td>Unoccupied Cool:</td>
-				<td><a class="modal-trigger btn" href="#setpoint-changer" id="unoccupied-cool" class="therm-buttons"></a></td>
-			</tr>
-		</table>
+		<h5 class="row">Setpoints</h5>
+		<div class="container col s10 offset-s1">
+			<div class="col s9">Occupied Day Heat:</div>
+			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="occupied-day-heat"></a></div>
+
+			<div class="col s9">Occupied Night Heat:</div>
+			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="occupied-night-heat"></a></div>
+
+			<div class="col s9">Unoccupied Heat:</div>
+			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="unoccupied-heat"></a></div>
+
+			<div class="col s9">Occupied Day Cool:</div>
+			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="occupied-day-cool"></a></div>
+
+			<div class="col s9">Occupied Night Cool:</div>
+			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="occupied-night-cool"></a></div>
+
+			<div class="col s9">Unoccupied Cool:</div>
+			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="unoccupied-cool"></a></div>
+		</div>
+
   </div>
 </div>
 
 	<!-- Popup Setpoint Changer -->
 	<div class="modal" id="setpoint-changer">
-		<div class="modal-content row">
-			<table width="90%" align="center">
-        <tr>
-  	      <td colspan="2" align="center"><h4>Change Setpoint</h4></td>
-				</tr>
-				<tr>
-				  <td align="left"> <div id="change-setpoint-label"></div> </td>
-				  <td width="100px" align="right"> <div id="change-setpoint-container"></div> </td>
-				</tr>
-			</table>
-			<table width="90%" align="center">
-				<tr>
-    		  <td align="center" style="width:50%"> <button id="mod-setpoint-down" class="therm-buttons">Down</button> </td>
-				  <td align="center" style="width:50%"> <button id="mod-setpoint-up" class="therm-buttons">Up</button> </td>
-				</tr>
-			</table>
+		<div class="modal-content container row">
+			<div class="col s12">
+  	    <h4 class="center-align">Change Setpoint</h4>
+				<div id="change-setpoint-label" class="left-align col s12 m8"></div>
+				<div id="change-setpoint-container" class="right-align col s12 m4"></div>
+			</div>
+			<div class="col s12">
+				<button id="mod-setpoint-up" class="btn therm-buttons col s12 m6">Up</button>
+				<br /><br />
+    		<button id="mod-setpoint-down" class="btn therm-buttons col s12 m6">Down</button>
+			</div>
 		</div>
 	</div>
-
 
 </body>
 </html>
