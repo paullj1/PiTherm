@@ -139,9 +139,21 @@ function update_weather(data) {
 
 function update_local(data) {
 	//console.dir(data);
-	$("#current-temp-container").html("<h5>Actual: "+Math.floor(data.current_temp)+"º F</h5>");
-	$("#current-setpoint-container").html("<h5>Setpoint: "+(setpoint = data.current_setpoint)+"º F</h5>");
-	$("#current-mode-container").html("Mode: <b>"+data.mode+"</b>");
+	$("#current-temp-container").text(Math.floor(data.current_temp));
+	$("#current-setpoint-container").text((setpoint = data.current_setpoint));
+
+	var text_color = 'black-text';
+	var text = 'Off';
+	if (data.mode == 'heat') {
+		text_color = 'red-text';
+		text = 'Heat';
+	} else if (data.mode == 'cool') {
+		text_color = 'blue-text';
+		text = 'Cool';
+	}
+		
+	$("#current-mode-container").html(text);
+	$("#current-mode-container").addClass(text_color);
 	
 	var light = 'off';
 	if ( data.occupied == "True" ) light = 'on';

@@ -65,8 +65,8 @@
 			<div class="col s12 m6 push-m1 card-panel grey lighten-1" style="padding-top:10px">
 				<div class="row valign-wrapper">
 					<div class="col s8">
-						<div id="current-setpoint-container"></div>
-						<div id="current-temp-container"></div>
+						<h5>Actual:  <div style="display:inline" id="current-setpoint-container"></div>º F</h5>
+						<h5>Setpoint: <div style="display:inline" id="current-temp-container"></div>º F</h5>
 					</div>
 					<div class="col s4 valign">
 						<div id="presence-mode">
@@ -96,7 +96,7 @@
 		</div>
 		<div class="divider"></div>
 			<div class="row section">
-				<div class="col s6 center-align" id="current-mode-container"></div>
+				<span class="col s6 center-align">Mode: <b><span id="current-mode-container"></span></b></span>
 				<div class="col s6 center-align" id="occupied-status-container"></div>
 			</div>
 			<div class="row">
