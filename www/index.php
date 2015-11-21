@@ -69,12 +69,30 @@
 						<div id="current-temp-container"></div>
 					</div>
 					<div class="col s4 valign">
-						<button id="increase-setpoint" class="btn col s12 therm-buttons">Up</button>
-						<br /><br />
-    				<button id="decrease-setpoint" class="btn col s12 therm-buttons">Down</button>
+						<div id="presence-mode">
+							<p class="center-align">Presence Mode Active</p>
+						</div>
+						<div id="setpoint-changer">
+							<button id="increase-setpoint" class="btn col s12 therm-buttons">Up</button>
+							<br /><br />
+    					<button id="decrease-setpoint" class="btn col s12 therm-buttons">Down</button>
+						</div>
 					</div>
 				</div>
+				<!-- Override -->
+				<span class="row col s12 valign-wrapper">
+					<h5 class="col s6 row valign">Override: </h5>
+  				<div class="col s6 row switch valign">
+    				<label>
+      				<b class="black-text">Off</b>
+      				<input type="checkbox" id="override-switch" class="settings-form-sliders">
+      				<span class="lever"></span>
+      				<b class="black-text">On</b>
+    				</label>
+  				</div>
+				</span>
 			</div>
+
 		</div>
 		<div class="divider"></div>
 			<div class="row section">
@@ -97,17 +115,6 @@
 <div class="modal" id="settings">
 	<div class="modal-content row">
     <h4 class="col s12 center-align">Settings</h4>
-
-		<!-- Override -->
-		<h5 class="row">Override</h5>
-  	<div class="row switch">
-    	<label>
-      	Off
-      	<input type="checkbox" id="override-switch" class="settings-form-sliders">
-      	<span class="lever"></span>
-      	On
-    	</label>
-  	</div>
 
 		<!-- Mode -->
 		<h5 class="row">Mode</h5>

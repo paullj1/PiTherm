@@ -28,6 +28,7 @@ var LOCATION = "Dayton"
 var APIKEY="YOUR KEY HERE"
 var LOCAL_REFRESH_RATE = 10000
 var WEATHER_REFRESH_RATE = 60000
+var SETTINGS_REFRESH_RATE = 10000
 var setpoint = 0;
 var modify_setpoint_id = 0;
 var modify_setpoint_value = 0;
@@ -38,11 +39,7 @@ var modify_setpoint_value = 0;
 /*                      */
 /************************/
 $(document).ready(function() {
-	get_weather();
-	get_local();
-
-	// Settings Stuff
-	get_settings_data();
+	get_data();
 
 	// Connect Update Functions
 	$(".settings-form-sliders").bind( 'click', function( event ) { 
@@ -60,17 +57,23 @@ $(document).ready(function() {
 
 		if ( id != 0 && value != '')  {
 			set_val_db(id, value);
-			get_local();	
+			get_data();	
 		}
 	});
 
 	$(".settings-form-radios").bind( "click", function(event) {
 		//console.dir(event); // for debug
 		set_val_db(MODE_ID, event.currentTarget.value);
-		get_settings_data();
-		get_local();
+		get_data();
 	});
+
 });
+
+function get_data() {
+	get_weather();
+	get_local();
+	get_settings();
+}
 
 function get_local() {
   // Get local DB stuff
@@ -109,6 +112,21 @@ function get_weather() {
 	setTimeout(get_weather, WEATHER_REFRESH_RATE);
 }
 
+function get_settings() {
+	$.ajax({
+		type : "POST",
+		async: false,
+		url : "settings.php",
+		cache : false,
+		dataType : "json",
+		success : update_settings,
+		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
+	});
+
+	// Update info regularly
+	setTimeout(get_settings, SETTINGS_REFRESH_RATE);
+}
+
 function update_weather(data) {
 	//console.dir(data);
 
@@ -143,32 +161,20 @@ function update_local(data) {
 
 }
 
-/************************/
-/*                      */
-/*    SETTINGS PAGE     */
-/*                      */
-/************************/
-
-function get_settings_data() {
-	$.ajax({
-		type : "POST",
-		async: false,
-		url : "settings.php",
-		cache : false,
-		dataType : "json",
-		success : populate_settings,
-		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
-	});
-}
-
-function populate_settings(data) {
+function update_settings(data) {
 	//console.dir(data); // for debug
 	if (data.fan == "on") $("#fan-switch").prop("checked", true);
 	else $("#fan-switch").prop("checked", false);
 
-	if (data.override == "True") $("#override-switch").prop("checked", true);
-	else $("#override-switch").prop("checked", false);
-
+	if (data.override == "True") {
+		$("#presence-mode").hide();
+		$("#setpoint-changer").show();
+		$("#override-switch").prop("checked", true);
+	} else {
+		$("#presence-mode").show();
+		$("#setpoint-changer").hide();
+		$("#override-switch").prop("checked", false);
+	}
 
 	$("#mode-selector-heat").removeClass('btn').removeClass('btn-flat');
 	$("#mode-selector-cool").removeClass('btn').removeClass('btn-flat');
@@ -248,23 +254,23 @@ $(function() {
 			switch(id) {
 				case "increase-setpoint":
 					set_val_db(CURRENT_SETPOINT_ID, ++setpoint);
-					get_local();
+					get_data();
 					break;
 				case "decrease-setpoint":
 					set_val_db(CURRENT_SETPOINT_ID, --setpoint);
-					get_local();
+					get_data();
 					break;
 				case "mod-setpoint-up":
           if (modify_setpoint_id != 0 && modify_setpoint_value != 0)
 					  set_val_db(modify_setpoint_id, ++modify_setpoint_value);
 					get_setpoint(modify_setpoint_id);
-					get_settings_data();
+					get_data();
 					break;
 				case "mod-setpoint-down":
           if (modify_setpoint_id != 0 && modify_setpoint_value != 0)
 					  set_val_db(modify_setpoint_id, --modify_setpoint_value);
 					get_setpoint(modify_setpoint_id);
-					get_settings_data();
+					get_data();
 					break;
 				case "occupied-night-heat":
 					get_setpoint(NIGHT_OCCUPIED_HEAT_ID);
