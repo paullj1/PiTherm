@@ -152,23 +152,18 @@ function update_local(data) {
 		text = 'Cool';
 	}
 		
-	$("#current-mode-container").html(text);
-	$("#current-mode-container").addClass(text_color);
+	$("#current-mode-container").html('<span class="'+text_color+'">'+text+'</span>');
 	
-	var light = 'off';
-	if ( data.occupied == "True" ) light = 'on';
+	var light = ( data.occupied == "True" ) ? 'on' : 'off';
 	$("#occupied-status-container").html("Occupied: <img style='vertical-align:middle' src='images/"+light+".png'></img>");
 
-	light = 'off';
-	if ( data.heat_status == "on" ) light = 'on';
+	light = ( data.heat_status == "on" ) ? 'on' : 'off';
 	$("#heat-status-container").html("Heat: <img style='vertical-align:middle' src='images/"+light+".png'></img>");
 
-	light = 'off';
-	if ( data.cool_status == "on" ) light = 'on';
+	light = ( data.cool_status == "on" ) ? 'on' : 'off';
 	$("#cool-status-container").html("Cool: <img style='vertical-align:middle' src='images/"+light+".png'></img>");
 
-	light = 'off';
-	if ( data.fan_status == "on" ) light = 'on';
+	light = ( data.fan_status == "on" ) ? 'on' : 'off';
 	$("#fan-status-container").html("Fan: <img style='vertical-align:middle' src='images/"+light+".png'></img>");
 
 }
@@ -179,12 +174,11 @@ function update_settings(data) {
 	else $("#fan-switch").prop("checked", false);
 
 	if (data.override == "True") {
-		$("#presence-mode").hide();
-		$("#setpoint-changer").show();
+		$("#presence-mode").hide(100);
+		$("#setpoint-changer").show(100);
 		$("#override-switch").prop("checked", true);
 	} else {
-		$("#presence-mode").show();
-		$("#setpoint-changer").hide();
+		$("#setpoint-changer").hide(100, function() { $("#presence-mode").show(); });
 		$("#override-switch").prop("checked", false);
 	}
 
@@ -206,12 +200,12 @@ function update_settings(data) {
 		$("#mode-selector-off").addClass('btn')
 	}
 
-	$("#occupied-day-heat").text(data.day_occupied_heat+"º F");
-	$("#occupied-night-heat").text(data.night_occupied_heat+"º F");
-	$("#unoccupied-heat").text(data.unoccupied_heat+"º F");
-	$("#occupied-day-cool").text(data.day_occupied_cool+"º F");
-	$("#occupied-night-cool").text(data.night_occupied_cool+"º F");
-	$("#unoccupied-cool").text(data.unoccupied_cool+"º F");
+	$("#occupied-day-heat").text(data.day_occupied_heat+"º");
+	$("#occupied-night-heat").text(data.night_occupied_heat+"º");
+	$("#unoccupied-heat").text(data.unoccupied_heat+"º");
+	$("#occupied-day-cool").text(data.day_occupied_cool+"º");
+	$("#occupied-night-cool").text(data.night_occupied_cool+"º");
+	$("#unoccupied-cool").text(data.unoccupied_cool+"º");
 }
 
 function get_setpoint(id) {

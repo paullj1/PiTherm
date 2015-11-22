@@ -4,16 +4,16 @@
 	<title>PiTherm</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-  <!--Import materialize.css-->
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
-	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Stylesheets-->
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+	<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
 	<!--JavaScripts-->
-  <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
 	<script src="js/functions.js"></script>
 
 	<!--Apple iOS app-->
@@ -65,8 +65,8 @@
 			<div class="col s12 m6 push-m1 card-panel grey lighten-1" style="padding-top:10px">
 				<div class="row valign-wrapper">
 					<div class="col s8">
-						<h5>Actual:  <div style="display:inline" id="current-setpoint-container"></div>º F</h5>
-						<h5>Setpoint: <div style="display:inline" id="current-temp-container"></div>º F</h5>
+						<h5>Setpoint:  <div style="display:inline" id="current-setpoint-container"></div>º F</h5>
+						<h5>Actual: <div style="display:inline" id="current-temp-container"></div>º F</h5>
 					</div>
 					<div class="col s4 valign">
 						<div id="presence-mode">
