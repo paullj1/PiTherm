@@ -175,10 +175,10 @@ function update_settings(data) {
 
 	if (data.override == "True") {
 		$("#presence-mode").hide(100);
-		$("#setpoint-changer").show(100);
+		$("#current-setpoint-changer").show(100);
 		$("#override-switch").prop("checked", true);
 	} else {
-		$("#setpoint-changer").hide(100, function() { $("#presence-mode").show(); });
+		$("#current-setpoint-changer").hide(100, function() { $("#presence-mode").show(); });
 		$("#override-switch").prop("checked", false);
 	}
 

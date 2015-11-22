@@ -72,7 +72,7 @@
 						<div id="presence-mode">
 							<p class="center-align">Presence Mode Active</p>
 						</div>
-						<div id="setpoint-changer">
+						<div id="current-setpoint-changer">
 							<button id="increase-setpoint" class="btn col s12 therm-buttons">Up</button>
 							<br /><br />
     					<button id="decrease-setpoint" class="btn col s12 therm-buttons">Down</button>
