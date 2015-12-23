@@ -7,7 +7,7 @@ require_once "constants.php";
 $qry_str = 'SELECT  `value` FROM `status` WHERE `id`
 	IN ('.FAN_ID.','.OVERRIDE_ID.','.MODE_ID.','.UNOCCUPIED_HEAT_ID.',
 	'.UNOCCUPIED_COOL_ID.','.DAY_OCCUPIED_HEAT_ID.','.DAY_OCCUPIED_COOL_ID.',
-	'.NIGHT_OCCUPIED_HEAT_ID.','.NIGHT_OCCUPIED_COOL_ID.') ORDER BY `id` ASC;';
+	'.MAC_ADDRESSES.', '.NIGHT_OCCUPIED_HEAT_ID.','.NIGHT_OCCUPIED_COOL_ID.') ORDER BY `id` ASC;';
 
 $result = query_db($con, $qry_str);
 
@@ -42,6 +42,10 @@ $return['night_occupied_cool'] = $entry['value'];
 # 14
 $entry = fetch_array_db($result);
 $return['day_occupied_cool'] = $entry['value'];
+
+# 15
+$entry = fetch_array_db($result);
+$return['mac_addresses'] = $entry['value'];
 
 # 17
 $entry = fetch_array_db($result);

@@ -18,6 +18,7 @@ var NIGHT_OCCUPIED_HEAT_ID = 11;
 var DAY_OCCUPIED_HEAT_ID = 12;
 var NIGHT_OCCUPIED_COOL_ID = 13;
 var DAY_OCCUPIED_COOL_ID = 14;
+var MAC_ADDRESSES = 15;
 var OVERRIDE_ID = 17;
 var OCCUPIED_ID = 18
 var HEAT_STATUS_ID = 19
@@ -206,6 +207,9 @@ function update_settings(data) {
 	$("#occupied-day-cool").text(data.day_occupied_cool+"º");
 	$("#occupied-night-cool").text(data.night_occupied_cool+"º");
 	$("#unoccupied-cool").text(data.unoccupied_cool+"º");
+
+	if ( !$("#mac-addresses").is(":focus") )
+		$("#mac-addresses").val(data.mac_addresses);
 }
 
 function get_setpoint(id) {
@@ -231,6 +235,11 @@ function update_setpoint(data) {
   modify_setpoint_value = data.value; // MESSY! need a better way to do this
 }
 
+function save_mac_addresses() {
+	addresses = $("#mac-addresses").val()
+	set_val_db(MAC_ADDRESSES, addresses)
+}
+
 /************************/
 /*                      */
 /*        GENERIC       */
@@ -248,9 +257,17 @@ function set_val_db(id,value) {
 			id: id,
 			value: value
 		},
-		success : function(xhr) { console.log("Successufully Updated DB"); },
+		success : (id == MAC_ADDRESSES) ? db_update_mac : db_update_success,
 		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
 	});
+}
+
+function db_update_success() {
+	console.log("Successufully Updated DB");
+}
+
+function db_update_mac() {
+	alert("Successfully Updated MAC Addresses");
 }
 
 // Button Handler

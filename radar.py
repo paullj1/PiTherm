@@ -29,14 +29,20 @@ signal.signal(signal.SIGINT, cleanup)
 #  Obtain phone MAC addresses... must do it before loop since db connection tends to time out while the app
 #	 blocks waiting for tcpdump to return (for several hours while I'm at work).  This means that if those
 #	 values are updated in the DB, the service must be restarted.
-pj_id = therm.get_value_from_id(db, therm.PJ_PHONE_ID)
-kt_id = therm.get_value_from_id(db, therm.KT_PHONE_ID)
-if pj_id == "" or kt_id == "" :
+mac_addresses = therm.get_value_from_id(db, therm.MAC_ADDRESSES)
+if mac_addresses == "" :
 	print str(datetime.datetime.now()) + ": Radar Error: couldn't get IDs from database, trying again next time..."
 	db.close()
 	sys.exit(0)
 
-tcp_filter = "ether src "+str(pj_id)+" or ether src "+str(kt_id)
+tcp_filter = ""
+first = True
+for address in mac_addresses.split():
+	if first :
+		first = False
+		tcp_filter = tcp_filter + "ether src "+str(address)+" "
+	else :
+		tcp_filter = tcp_filter + "or ether src "+str(address)+" "
 
 while True :
 	try : 
