@@ -50,6 +50,7 @@ def get_temp(db) :
 	
 	# Try to read 5 times
 	count = 0
+	indoor_temp = -1.0
 	# Read temp from sensor
 	while True :
 		try : 
