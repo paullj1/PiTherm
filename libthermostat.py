@@ -54,6 +54,7 @@ def setup_io() :
 def read_sensor_file() :
 
 	count = 0
+	raw_text = None
 
 	while True :
 		try : 
