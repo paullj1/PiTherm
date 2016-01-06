@@ -5,6 +5,7 @@ import datetime
 import sys
 import time
 import subprocess
+import glob
 
 # Constants
 ON = io.LOW
@@ -100,7 +101,7 @@ def get_temp(db) :
 	if equals_pos == -1 :
 		return indoor_temp
 
-	temp_string = lines[1][equals_pos+2:]
+	temp_string = raw_text[1][equals_pos+2:]
 	temp_c = float(temp_string) / 1000.0
 	temp_f = temp_c * 9.0 / 5.0 + 32.0
 	indoor_temp = temp_f # TODO make this dependent upon db val
