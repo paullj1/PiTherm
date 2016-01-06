@@ -93,6 +93,8 @@ def get_temp(db) :
 	while raw_text[0].strip()[-3:] != 'YES':
 		time.sleep(0.5)
 		raw_text = read_sensor_file()
+		if raw_text is None :
+			return indoor_temp
 
 	equals_pos = raw_text[1].find('t=')
 	if equals_pos == -1 :
