@@ -63,7 +63,6 @@ def read_sensor_file() :
 			f.close()
 		except IOError:
 			if count > 10 :
-				raw_text = None
 				print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 				print 															 "     - More details: ", sys.exc_info()[0]
 			else :
@@ -72,7 +71,6 @@ def read_sensor_file() :
 				subprocess.call(["modprobe", "w1-therm"])
 				time.sleep(30)	
 		except :
-			raw_text = None
 			print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 			print 															 "     - More details: ", sys.exc_info()[0]
 			break
