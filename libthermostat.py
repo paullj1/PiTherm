@@ -66,7 +66,7 @@ def get_temp(db) :
 			# Write it out to database
 			set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
 		except IOError:
-			if count > 5 :
+			if count > 10 :
 				indoor_temp = -1;
 				print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 				print 															 "     - More details: ", sys.exc_info()[0]
@@ -75,7 +75,7 @@ def get_temp(db) :
 				count += 1
 				subprocess.call(["modprobe", "w1-gpio"])
 				subprocess.call(["modprobe", "w1-therm"])
-				time.sleep(3)	
+				time.sleep(30)	
 	
 		except :
 			indoor_temp = -1;
