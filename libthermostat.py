@@ -16,6 +16,11 @@ NIGHT = 21
 DAY = 5
 OCCUPIED_TIMEOUT = 30
 
+# 1wire Info
+base_dir = '/sys/bus/w1/devices/'
+one_wire_folder = glob.glob(base_dir + '28*')[0]
+one_wire_file = one_wire_folder + '/w1_slave'
+
 # PLIST Constants
 CURRENT_TEMP_ID = 1
 CURRENT_SETPOINT_ID = 2
@@ -45,46 +50,61 @@ def setup_io() :
 	io.setup(FAN_PIN, io.OUT, initial=OFF)
 	io.setup(COOL_PIN, io.OUT, initial=OFF)
 
-# Read temperature
-def get_temp(db) :
-	
-	# Try to read 5 times
+def read_sensor_file() :
+
 	count = 0
-	indoor_temp = -1.0
-	# Read temp from sensor
+
 	while True :
 		try : 
-			temp_file = open("/sys/bus/w1/devices/28-021467d9ddff/w1_slave") 
-			raw_text = temp_file.read()
-			temp_file.close()
-			second_line = raw_text.split("\n")[1]
-			temp_data = second_line.split(" ")[9]
-			indoor_temp = float(temp_data[2:]) 
-			indoor_temp /= 1000
-			indoor_temp = indoor_temp * 1.8 + 32
-		
-			# Write it out to database
-			set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
+			f = open(one_wire_file, 'r') 
+			raw_text = f.readlines()
+			f.close()
 		except IOError:
 			if count > 10 :
-				indoor_temp = -1;
+				raw_text = None
 				print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 				print 															 "     - More details: ", sys.exc_info()[0]
-				break
 			else :
 				count += 1
 				subprocess.call(["modprobe", "w1-gpio"])
 				subprocess.call(["modprobe", "w1-therm"])
 				time.sleep(30)	
-	
 		except :
-			indoor_temp = -1;
+			raw_text = None
 			print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 			print 															 "     - More details: ", sys.exc_info()[0]
 			break
+		
+		# Got contents, break
+		break
 
-		# Got the temperature without failing
-		break	
+	return raw_text
+
+# Read temperature
+def get_temp(db) :
+	
+	indoor_temp = -1.0
+	raw_text = read_sensor_file()
+
+	if raw_text is None :
+		return indoor_temp
+
+	# Check for good CRC (get bad ones if wire is too long and it's cold)
+	while raw_text[0].strip()[-3:] != 'YES':
+		time.sleep(0.5)
+		raw_text = read_sensor_file()
+
+	equals_pos = raw_text[1].find('t=')
+	if equals_pos == -1 :
+		return indoor_temp
+
+	temp_string = lines[1][equals_pos+2:]
+	temp_c = float(temp_string) / 1000.0
+	temp_f = temp_c * 9.0 / 5.0 + 32.0
+	indoor_temp = temp_f # TODO make this dependent upon db val
+
+	# Write it out to database
+	set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
 	return indoor_temp
 
 def get_value_from_id(db, db_id) :
