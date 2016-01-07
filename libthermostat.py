@@ -17,11 +17,6 @@ NIGHT = 21
 DAY = 5
 OCCUPIED_TIMEOUT = 30
 
-# 1wire Info
-base_dir = '/sys/bus/w1/devices/'
-one_wire_folder = glob.glob(base_dir + '28*')[0]
-one_wire_file = one_wire_folder + '/w1_slave'
-
 # PLIST Constants
 CURRENT_TEMP_ID = 1
 CURRENT_SETPOINT_ID = 2
@@ -58,18 +53,19 @@ def read_sensor_file() :
 
 	while True :
 		try : 
-			f = open(one_wire_file, 'r') 
+			f = open((glob.glob('/sys/bus/w1/devices/28*')[0] + '/w1_slave'), 'r') 
 			raw_text = f.readlines()
 			f.close()
 		except IOError:
 			if count > 10 :
-				print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
+				print str(datetime.datetime.now()) + ": IO error getting indoor temperature... shutting down"
 				print 															 "     - More details: ", sys.exc_info()[0]
 			else :
 				count += 1
 				subprocess.call(["modprobe", "w1-gpio"])
 				subprocess.call(["modprobe", "w1-therm"])
 				time.sleep(30)	
+				continue
 		except :
 			print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
 			print 															 "     - More details: ", sys.exc_info()[0]

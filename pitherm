@@ -26,17 +26,17 @@ start() {
   echo 'Starting service…' >&2
 
 	echo 'Starting radar...' >&2
-  local CMD="$RADAR &> \"$LOGFILE\" & echo \$!"
+  local CMD="$RADAR &>> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$RADARPIDFILE"
 	echo 'radar started' >&2
 
 	echo 'Starting pitherm' >&2
-  local CMD="$PITHERM &> \"$LOGFILE\" & echo \$!"
+  local CMD="$PITHERM &>> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PITHERMPIDFILE"
 	echo 'pitherm started' >&2
 
 	echo 'Starting pitherm button' >&2
-  local CMD="$PITHERMBUTTON &> \"$LOGFILE\" & echo \$!"
+  local CMD="$PITHERMBUTTON &>> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PITHERMBUTTONPIDFILE"
 	echo 'pitherm button started' >&2
 
