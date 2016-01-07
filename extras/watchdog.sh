@@ -5,5 +5,5 @@ if (( $(ps -ef | grep -v grep | grep -v pitherm.local | grep pitherm | wc -l) > 
 then
 echo "$service is running!!!"
 else
-/etc/init.d/$service start
+/etc/init.d/$service restart
 fi
