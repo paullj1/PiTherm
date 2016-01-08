@@ -56,20 +56,17 @@ def read_sensor_file() :
 			f = open((glob.glob('/sys/bus/w1/devices/28*')[0] + '/w1_slave'), 'r') 
 			raw_text = f.readlines()
 			f.close()
-		except IOError:
+		except :
 			if count > 10 :
 				print str(datetime.datetime.now()) + ": IO error getting indoor temperature... shutting down"
 				print 															 "     - More details: ", sys.exc_info()[0]
+				break
 			else :
 				count += 1
 				subprocess.call(["modprobe", "w1-gpio"])
 				subprocess.call(["modprobe", "w1-therm"])
 				time.sleep(30)	
 				continue
-		except :
-			print str(datetime.datetime.now()) + ": Fatal error getting indoor temperature... shutting down"
-			print 															 "     - More details: ", sys.exc_info()[0]
-			break
 		
 		# Got contents, break
 		break
