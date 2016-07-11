@@ -211,14 +211,10 @@ def check_occupancy(db) :
 	result = get_value_from_id(db, LAST_OCCUPIED_ID)
 	last_occupied = datetime.datetime.strptime(result, '%Y-%m-%d %H:%M:%S')
 	if last_occupied < (datetime.datetime.now() - datetime.timedelta(minutes=OCCUPIED_TIMEOUT)):
-		set_value_in_db(db, OCCUPIED_ID, 'False')
-		r = urllib.urlopen("http://10.0.10.21/set_alarm.cgi?user=pj&pwd=!@12QWqwe&next_url=http://10.0.10.21/&motion_armed=1&motion_sensitivity=8&motion_compensation=1")
 		r.close()
 		return False
 
 	set_value_in_db(db, OCCUPIED_ID, 'True')
-	r = urllib.urlopen("http://10.0.10.21/set_alarm.cgi?user=pj&pwd=!@12QWqwe&next_url=http://10.0.10.21/&motion_armed=0")
-	r.close()
 	return True
 # end check_occupancy()
 
