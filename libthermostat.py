@@ -6,6 +6,7 @@ import sys
 import time
 import subprocess
 import glob
+import urllib
 
 # Constants
 ON = io.LOW
@@ -30,7 +31,7 @@ NIGHT_OCCUPIED_HEAT_ID = 11
 DAY_OCCUPIED_HEAT_ID = 12
 NIGHT_OCCUPIED_COOL_ID = 13
 DAY_OCCUPIED_COOL_ID = 14
-MAC_ADDRESSES = 15
+IP_ADDRESSES = 15
 OVERRIDE_ID = 17
 OCCUPIED_ID = 18
 HEAT_STATUS_ID = 19
@@ -211,9 +212,13 @@ def check_occupancy(db) :
 	last_occupied = datetime.datetime.strptime(result, '%Y-%m-%d %H:%M:%S')
 	if last_occupied < (datetime.datetime.now() - datetime.timedelta(minutes=OCCUPIED_TIMEOUT)):
 		set_value_in_db(db, OCCUPIED_ID, 'False')
+		r = urllib.urlopen("http://10.0.10.21/set_alarm.cgi?user=pj&pwd=!@12QWqwe&next_url=http://10.0.10.21/&motion_armed=1&motion_sensitivity=8&motion_compensation=1")
+		r.close()
 		return False
 
 	set_value_in_db(db, OCCUPIED_ID, 'True')
+	r = urllib.urlopen("http://10.0.10.21/set_alarm.cgi?user=pj&pwd=!@12QWqwe&next_url=http://10.0.10.21/&motion_armed=0")
+	r.close()
 	return True
 # end check_occupancy()
 

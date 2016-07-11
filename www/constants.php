@@ -12,7 +12,7 @@ define("NIGHT_OCCUPIED_HEAT_ID", "11");
 define("DAY_OCCUPIED_HEAT_ID", "12");
 define("NIGHT_OCCUPIED_COOL_ID", "13");
 define("DAY_OCCUPIED_COOL_ID", "14");
-define("MAC_ADDRESSES", "15");
+define("IP_ADDRESSES", "15");
 define("OVERRIDE_ID", "17");
 define("OCCUPIED_ID", "18");
 define("HEAT_STATUS_ID", "19");

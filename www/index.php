@@ -155,16 +155,16 @@
 			<div class="col s3"><a class="modal-trigger btn therm-buttons row" href="#setpoint-changer" id="unoccupied-cool"></a></div>
 		</div>
 
-		<!-- MAC Addresses -->
+		<!-- IP Addresses -->
 		<div class="col s10 offset-s1">
-				<label for="mac-addresses">
-					<h5 class="row black-text">MAC Addresses</h5>
+				<label for="ip-addresses">
+					<h5 class="row black-text">IP Addresses</h5>
 					<h6 class="row grey-text lighten-1">separate multiple entries with a space or newline</h6>
 				</label>
 			<div class="input-field">
-				<textarea id="mac-addresses" class="materialize-textarea"></textarea>
+				<textarea id="ip-addresses" class="materialize-textarea"></textarea>
 			</div>
-			<button class="row btn" onclick="save_mac_addresses()">Save</button>
+			<button class="row btn" onclick="save_ip_addresses()">Save</button>
 		</div>
 
   </div>
