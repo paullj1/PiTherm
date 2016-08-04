@@ -15,21 +15,22 @@ NUM_PACKETS = "10"
 
 #  Functions
 def cleanup(signal, frame) :
-    global db
-    db.close()
     sys.exit(0)
 
-def PktRcvd(db) :
+def PktRcvd() :
+    db = sql.connect('localhost','thermostat','password','thermostat')
     therm.set_value_in_db(db, therm.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
+    db.close()
 
 #  Main Program 
-db = sql.connect('localhost','thermostat','password','thermostat')
 signal.signal(signal.SIGINT, cleanup)
 
+db = sql.connect('localhost','thermostat','password','thermostat')
 ip_addresses = therm.get_value_from_id(db, therm.IP_ADDRESSES)
+db.close()
+
 if ip_addresses == "" :
     print("{0}: Radar Error: couldn't get IDs from database, trying again next time...".format(datetime.datetime.now()))
-    db.close()
     sys.exit(0)
 
 while True :
@@ -38,9 +39,6 @@ while True :
         pkt = subprocess.call(["arping", "-i", "eth0", "-c", NUM_PACKETS, address], stdout=FNULL, stderr=FNULL)
         FNULL.close()
     
-        if not db.open :
-            db = sql.connect('localhost','thermostat','password','thermostat')
-
-        if pkt == 0 : PktRcvd(db)
+        if pkt == 0 : PktRcvd()
 
     time.sleep(10)	
