@@ -1,0 +1,39 @@
+version: '2'
+services:
+  db:
+    build: ./db/
+    restart: always
+    env_file: .env
+    volumes:
+      - 'db:/var/lib/mysql'
+  radar:
+    build: ./radar/
+    restart: always
+    env_file: .env
+    depends_on:
+      - db
+    external_links:
+      - db:db
+  pitherm:
+    build: ./pitherm/
+    restart: always
+    env_file: .env
+    depends_on:
+      - db
+    external_links:
+      - db:db
+  web:
+    build: ./web/
+    restart: always
+    env_file: .env
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - radar
+      - pitherm
+    external_links:
+      - db:db
+
+volumes:
+  db:
