@@ -33,15 +33,15 @@ db = sql.connect('db',
     os.environ['MYSQL_USER'],
     os.environ['MYSQL_PASS'],
     os.environ['MYSQL_DATABASE'])
-mac_addresses = therm.get_value_from_id(db, therm.MAC_ADDRESSES)
+ip_addresses = therm.get_value_from_id(db, therm.IP_ADDRESSES)
 db.close()
 
-if mac_addresses == "":
+if ip_addresses == "":
     print("{0}: Radar Error: couldn't get IDs from database, trying again next time...".format(datetime.datetime.now()))
     sys.exit(0)
 
 while True:
-    for address in mac_addresses.split():
+    for address in ip_addresses.split():
         FNULL = open(os.devnull, 'w')
         pkt = subprocess.call(["arping", "-i", "eth0", "-c", NUM_PACKETS, address], stdout=FNULL, stderr=FNULL)
         FNULL.close()
