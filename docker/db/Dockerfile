@@ -4,8 +4,4 @@
 FROM mysql:5
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
-RUN mkdir /db
-ADD seed.sql /db/
-RUN mysql --user ${MYSQL_USER} \
-          --password ${MYSQL_PASS} \
-          ${MYSQL_DATABASE} < /db/seed.sql
+ADD seed.sql /docker-entrypoint-initdb.d/
