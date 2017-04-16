@@ -10,6 +10,10 @@ services:
     build: ./radar/
     restart: always
     env_file: .env
+    devices:
+      - "/dev/mem:/dev/mem"
+    cap_add:
+      - SYS_RAWIO
     depends_on:
       - db
     external_links:
@@ -18,6 +22,12 @@ services:
     build: ./pitherm/
     restart: always
     env_file: .env
+    volumes:
+      - "/sys/bus/w1/:/sys/bus/w1/"
+    devices:
+      - "/dev/mem:/dev/mem"
+    cap_add:
+      - SYS_RAWIO
     depends_on:
       - db
     external_links:

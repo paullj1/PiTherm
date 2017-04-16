@@ -1,17 +1,20 @@
 # PiTherm's web front end UI
 # VERSION 1.0
 
-FROM php:7
+FROM php:7.0-apache
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=1m --timeout=5s \
-  CMD curl -f https://localhost/ || exit 1
+  CMD curl -f http://localhost/ || exit 1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         sqlite3 \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
+
 
 COPY ./www/ /var/www/html/
+RUN sed -i -e "s/OPEN_WEATHER_API_KEY/${OPEN_WEATHER_API_KEY}/" /var/www/html/js/functions.js
+RUN sed -i -e "s/OPEN_WEATHER_LOCATION/${OPEN_WEATHER_LOCATION}/" /var/www/html/js/functions.js
 
 EXPOSE 80

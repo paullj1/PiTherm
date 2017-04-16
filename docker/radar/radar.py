@@ -8,7 +8,7 @@ import os
 import time
 import sys
 
-import libthermostat as therm
+import libradar as radar
 
 # Constants
 NUM_PACKETS = "10"
@@ -19,21 +19,15 @@ def cleanup(signal, frame):
 
 
 def PktRcvd():
-    db = sql.connect('db',
-        os.environ['MYSQL_USER'],
-        os.environ['MYSQL_PASS'],
-        os.environ['MYSQL_DATABASE'])
-    therm.set_value_in_db(db, therm.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
+    db = radar.open_db()
+    radar.set_value_in_db(db, radar.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
     db.close()
 
 #  Main Program 
 signal.signal(signal.SIGINT, cleanup)
 
-db = sql.connect('db',
-    os.environ['MYSQL_USER'],
-    os.environ['MYSQL_PASS'],
-    os.environ['MYSQL_DATABASE'])
-ip_addresses = therm.get_value_from_id(db, therm.IP_ADDRESSES)
+db = radar.open_db()
+ip_addresses = radar.get_value_from_id(db, radar.IP_ADDRESSES)
 db.close()
 
 if ip_addresses == "":

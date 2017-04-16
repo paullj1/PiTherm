@@ -1,7 +1,7 @@
 # PiTherm Dockerfile
 # VERSION 1.0
 
-FROM resin/rpi-raspbian:jessie
+FROM resin/rpi-raspbian:wheezy
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=5m --timeout=3s \
@@ -9,13 +9,15 @@ HEALTHCHECK --interval=5m --timeout=3s \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        python python-pip \
+        python \
+        python-dev \
+        python-pip \
+        gcc \
+        libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*
-
-RUN echo 'dtoverlay=w1-gpio,gpiopin=4' >> /boot/config.txt
 
 RUN mkdir /pitherm
 ADD pitherm.py libthermostat.py requirements.txt /pitherm/
-RUN pip install -r /radar/requirements.txt
+RUN pip install -r /pitherm/requirements.txt
 
 CMD [ "python", "/pitherm/pitherm.py" ]
