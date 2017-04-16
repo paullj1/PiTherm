@@ -1,17 +1,13 @@
 # PiTherm's web front end UI
 # VERSION 1.0
 
-FROM php:7.0-apache
+FROM nidorpi/rpi-php:7.0-apache
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=1m --timeout=5s \
   CMD curl -f http://localhost/ || exit 1
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        sqlite3 \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN docker-php-ext-install mysqli
 
 COPY ./www/ /var/www/html/
 RUN sed -i -e "s/OPEN_WEATHER_API_KEY/${OPEN_WEATHER_API_KEY}/" /var/www/html/js/functions.js
