@@ -10,10 +10,6 @@ services:
     build: ./radar/
     restart: always
     env_file: .env
-    devices:
-      - "/dev/mem:/dev/mem"
-    cap_add:
-      - SYS_RAWIO
     depends_on:
       - db
     external_links:
