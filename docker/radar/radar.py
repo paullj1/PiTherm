@@ -8,7 +8,7 @@ import os
 import time
 import sys
 
-import libradar as radar
+import libradar as lradar
 
 # Constants
 NUM_PACKETS = "10"
@@ -19,15 +19,15 @@ def cleanup(signal, frame):
 
 
 def PktRcvd():
-    db = radar.open_db()
-    radar.set_value_in_db(db, radar.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
+    db = lradar.open_db()
+    lradar.set_value_in_db(db, lradar.LAST_OCCUPIED_ID, str(datetime.datetime.now())[:19])
     db.close()
 
 #  Main Program 
 signal.signal(signal.SIGINT, cleanup)
 
-db = radar.open_db()
-ip_addresses = radar.get_value_from_id(db, radar.IP_ADDRESSES)
+db = lradar.open_db()
+ip_addresses = lradar.get_value_from_id(db, lradar.IP_ADDRESSES)
 db.close()
 
 if ip_addresses == "":

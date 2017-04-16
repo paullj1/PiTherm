@@ -2,6 +2,7 @@
 import _mysql as sql
 import datetime
 import sys
+import os
 
 # PLIST Constants
 LAST_OCCUPIED_ID = 7

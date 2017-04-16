@@ -17,7 +17,7 @@ def cleanup(signal, frame):
     sys.exit(0)
 
 # Database Connection
-db = open_db()
+db = therm.open_db()
 
 therm.setup_io()
 signal.signal(signal.SIGINT, cleanup)
@@ -25,7 +25,7 @@ while True:
 
     # Make Sure DB connection is still alive
     if not db.open:
-        db = open_db()
+        db = therm.open_db()
 
     # Get variables from sensors/input
     occupied = therm.check_occupancy(db)
