@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   db:
     build: ./db/
@@ -12,8 +12,6 @@ services:
     env_file: .env
     depends_on:
       - db
-    external_links:
-      - db:db
   pitherm:
     build: ./pitherm/
     restart: always
@@ -26,8 +24,6 @@ services:
       - SYS_RAWIO
     depends_on:
       - db
-    external_links:
-      - db:db
   web:
     build: ./web/
     restart: always
@@ -38,8 +34,6 @@ services:
       - db
       - radar
       - pitherm
-    external_links:
-      - db:db
 
 volumes:
   db:

@@ -10,7 +10,5 @@ HEALTHCHECK --interval=1m --timeout=5s \
 RUN docker-php-ext-install mysqli
 
 COPY ./www/ /var/www/html/
-RUN sed -i -e "s/OPEN_WEATHER_API_KEY/${OPEN_WEATHER_API_KEY}/" /var/www/html/js/functions.js
-RUN sed -i -e "s/OPEN_WEATHER_LOCATION/${OPEN_WEATHER_LOCATION}/" /var/www/html/js/functions.js
 
 EXPOSE 80

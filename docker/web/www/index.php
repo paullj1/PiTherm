@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +27,30 @@
   			require_once "connect.php"; // Gives us $con
   			require_once "constants.php";
   			require_once "thermo_functions.php";
+
+			echo "
+				document.LOCATION=". $_ENV["OPEN_WEATHER_LOCATION"] .";
+				document.APIKEY='". $_ENV["OPEN_WEATHER_API_KEY"] ."';
+				document.CURRENT_TEMP_ID=". CURRENT_TEMP_ID .";
+				document.CURRENT_SETPOINT_ID=". CURRENT_SETPOINT_ID .";
+				document.MODE_ID=". MODE_ID .";
+				document.VARIANCE_ID=". VARIANCE_ID .";
+				document.FAN_ID=". FAN_ID .";
+				document.LAST_OCCUPIED_ID=". LAST_OCCUPIED_ID .";
+				document.UNOCCUPIED_HEAT_ID=". UNOCCUPIED_HEAT_ID .";
+				document.UNOCCUPIED_COOL_ID=". UNOCCUPIED_COOL_ID .";
+				document.NIGHT_OCCUPIED_HEAT_ID=". NIGHT_OCCUPIED_HEAT_ID .";
+				document.DAY_OCCUPIED_HEAT_ID=". DAY_OCCUPIED_HEAT_ID .";
+				document.NIGHT_OCCUPIED_COOL_ID=". NIGHT_OCCUPIED_COOL_ID .";
+				document.DAY_OCCUPIED_COOL_ID=". DAY_OCCUPIED_COOL_ID .";
+				document.IP_ADDRESSES=". IP_ADDRESSES .";
+				document.OVERRIDE_ID=". OVERRIDE_ID .";
+				document.OCCUPIED_ID=". OCCUPIED_ID .";
+				document.HEAT_STATUS_ID=". HEAT_STATUS_ID .";
+				document.COOL_STATUS_ID=". COOL_STATUS_ID .";
+				document.FAN_STATUS_ID=". FAN_STATUS_ID .";
+			";
+
 			?>
 			$('.modal-trigger').leanModal();
 		});

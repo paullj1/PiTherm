@@ -6,27 +6,6 @@
 /**********************************/
 
 // Constants
-var CURRENT_TEMP_ID = 1;
-var CURRENT_SETPOINT_ID = 2;
-var MODE_ID = 3;
-var VARIANCE_ID = 4;
-var FAN_ID = 6;
-var LAST_OCCUPIED_ID = 7;
-var UNOCCUPIED_HEAT_ID = 8;
-var UNOCCUPIED_COOL_ID = 9;
-var NIGHT_OCCUPIED_HEAT_ID = 11;
-var DAY_OCCUPIED_HEAT_ID = 12;
-var NIGHT_OCCUPIED_COOL_ID = 13;
-var DAY_OCCUPIED_COOL_ID = 14;
-var IP_ADDRESSES = 15;
-var OVERRIDE_ID = 17;
-var OCCUPIED_ID = 18
-var HEAT_STATUS_ID = 19
-var COOL_STATUS_ID = 20
-var FAN_STATUS_ID = 21
-
-var LOCATION="OPEN_WEATHER_LOCATION"
-var APIKEY="OPEN_WEATHER_API_KEY"
 var LOCAL_REFRESH_RATE = 10000
 var WEATHER_REFRESH_RATE = 60000
 var SETTINGS_REFRESH_RATE = 10000
@@ -47,12 +26,12 @@ $(document).ready(function() {
 		var id = 0;
 		var value = '';
 		if ( event.currentTarget.id == "fan-switch" ) {
-			id = FAN_ID;
+			id = document.FAN_ID;
 			value = event.currentTarget.checked ? 'on' : 'auto';
 		}
 
 		if ( event.currentTarget.id == "override-switch" ) {
-			id = OVERRIDE_ID;
+			id = document.OVERRIDE_ID;
 			value = event.currentTarget.checked ? 'True' : 'False';
 		}
 
@@ -64,7 +43,7 @@ $(document).ready(function() {
 
 	$(".settings-form-radios").bind( "click", function(event) {
 		//console.dir(event); // for debug
-		set_val_db(MODE_ID, event.currentTarget.value);
+		set_val_db(document.MODE_ID, event.currentTarget.value);
 		get_data();
 	});
 
@@ -101,8 +80,8 @@ function get_weather() {
 		cache : false,
 		dataType : "json",
 		data : {
-			q: LOCATION,
-			APPID: APIKEY,
+			q: document.LOCATION,
+			APPID: document.APIKEY,
 			units: "imperial"
 		},
 		success : update_weather,
@@ -237,7 +216,7 @@ function update_setpoint(data) {
 
 function save_ip_addresses() {
 	addresses = $("#ip-addresses").val()
-	set_val_db(IP_ADDRESSES, addresses)
+	set_val_db(document.IP_ADDRESSES, addresses)
 }
 
 /************************/
@@ -257,7 +236,7 @@ function set_val_db(id,value) {
 			id: id,
 			value: value
 		},
-		success : (id == IP_ADDRESSES) ? db_update_ip : db_update_success,
+		success : (id == document.IP_ADDRESSES) ? db_update_ip : db_update_success,
 		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
 	});
 }
@@ -276,11 +255,11 @@ $(function() {
 			var id = $(this).attr("id");
 			switch(id) {
 				case "increase-setpoint":
-					set_val_db(CURRENT_SETPOINT_ID, ++setpoint);
+					set_val_db(document.CURRENT_SETPOINT_ID, ++setpoint);
 					get_data();
 					break;
 				case "decrease-setpoint":
-					set_val_db(CURRENT_SETPOINT_ID, --setpoint);
+					set_val_db(document.CURRENT_SETPOINT_ID, --setpoint);
 					get_data();
 					break;
 				case "mod-setpoint-up":
@@ -296,22 +275,22 @@ $(function() {
 					get_data();
 					break;
 				case "occupied-night-heat":
-					get_setpoint(NIGHT_OCCUPIED_HEAT_ID);
+					get_setpoint(document.NIGHT_OCCUPIED_HEAT_ID);
 					break;
 				case "occupied-day-heat":
-					get_setpoint(DAY_OCCUPIED_HEAT_ID);
+					get_setpoint(document.DAY_OCCUPIED_HEAT_ID);
 					break;
 				case "unoccupied-heat":
-					get_setpoint(UNOCCUPIED_HEAT_ID);
+					get_setpoint(document.UNOCCUPIED_HEAT_ID);
 					break;
 				case "occupied-night-cool":
-					get_setpoint(NIGHT_OCCUPIED_COOL_ID);
+					get_setpoint(document.NIGHT_OCCUPIED_COOL_ID);
 					break;
 				case "occupied-day-cool":
-					get_setpoint(DAY_OCCUPIED_COOL_ID);
+					get_setpoint(document.DAY_OCCUPIED_COOL_ID);
 					break;
 				case "unoccupied-cool":
-					get_setpoint(UNOCCUPIED_COOL_ID);
+					get_setpoint(document.UNOCCUPIED_COOL_ID);
 					break;
 			}
 		})

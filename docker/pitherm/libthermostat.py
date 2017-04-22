@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import RPi.GPIO as io
-import _mysql as sql
+import MySQLdb as sql
 import datetime
 import sys
 import time
@@ -41,16 +41,15 @@ FAN_STATUS_ID = 21
 
 # Init GPIO
 def setup_io():
-    io.setmode(io.BCM)	
+    io.setmode(io.BCM)
     io.setwarnings(False)
     io.setup(HEAT_PIN, io.OUT, initial=OFF)
     io.setup(FAN_PIN, io.OUT, initial=OFF)
     io.setup(COOL_PIN, io.OUT, initial=OFF)
 
 def open_db():
-    return sql.connect('db',
-        os.environ['MYSQL_USER'],
-        os.environ['MYSQL_PASS'],
+    return sql.connect('db', 'root',
+        os.environ['MYSQL_ROOT_PASSWORD'],
         os.environ['MYSQL_DATABASE'])
 
 def read_sensor_file():
@@ -72,7 +71,7 @@ def read_sensor_file():
                 count += 1
                 subprocess.call(["modprobe", "w1-gpio"])
                 subprocess.call(["modprobe", "w1-therm"])
-                time.sleep(30)	
+                time.sleep(30)
                 continue
         
         # Got contents, break
@@ -111,10 +110,11 @@ def get_temp(db):
 def get_value_from_id(db, db_id):
     try:
         query = "SELECT `value` FROM `status` WHERE `id`="+str(db_id)+";"
-        db.query(query)
-        result = db.use_result()
-        value = result.fetch_row()
-        return str(value[0][0])
+        cursor = db.cursor()
+        cursor.execute(query)
+        db.commit()
+
+        value = cursor.fetchone()
     except: # Try again next time
         print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'"
         print "     - More details: ", sys.exc_info()[0]

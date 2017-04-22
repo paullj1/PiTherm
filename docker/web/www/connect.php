@@ -1,11 +1,10 @@
 <?php
 
 // Create connection
-$db_name = getenv("DB_NAME");
-$db_user = getenv("DB_USER");
-$db_pass = getenv("DB_PASS");
+$db_name = getenv("MYSQL_DATABASE");
+$db_pass = getenv("MYSQL_ROOT_PASSWORD");
 
-$con = mysqli_connect("db",$db_user,$db_pass,$db_name);
+$con = mysqli_connect("db","root",$db_pass,$db_name);
 $con->set_charset("utf8");
 
 // Check connection
