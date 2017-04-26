@@ -1,0 +1,2 @@
+homebridge-thermostat
+homebridge-chamberlain
