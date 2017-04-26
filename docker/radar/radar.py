@@ -37,7 +37,7 @@ if ip_addresses == "":
 while True:
     for address in ip_addresses.split():
         FNULL = open(os.devnull, 'w')
-        pkt = subprocess.call(["arping", "-i", "eth0", "-c", NUM_PACKETS, address], stdout=FNULL, stderr=FNULL)
+        pkt = subprocess.call(["arping", "-c", NUM_PACKETS, address], stdout=FNULL, stderr=FNULL)
         FNULL.close()
     
         if pkt == 0: PktRcvd()

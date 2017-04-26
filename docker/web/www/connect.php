@@ -4,7 +4,7 @@
 $db_name = getenv("MYSQL_DATABASE");
 $db_pass = getenv("MYSQL_ROOT_PASSWORD");
 
-$con = mysqli_connect("db","root",$db_pass,$db_name);
+$con = mysqli_connect("127.0.0.1","root",$db_pass,$db_name);
 $con->set_charset("utf8");
 
 // Check connection

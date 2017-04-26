@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose run db /tmp/seed.sh
+docker-compose exec db /tmp/seed.sh

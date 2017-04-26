@@ -1,7 +1,7 @@
 # PiTherm Radar Dockerfile
 # VERSION 1.0
 
-FROM resin/rpi-raspbian:wheezy
+FROM resin/rpi-raspbian:jessie
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=5m --timeout=3s \

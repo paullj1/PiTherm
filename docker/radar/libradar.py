@@ -9,7 +9,7 @@ LAST_OCCUPIED_ID = 7
 IP_ADDRESSES = 15
 
 def open_db():
-    return sql.connect('db', 'root',
+    return sql.connect('127.0.0.1', 'root',
         os.environ['MYSQL_ROOT_PASSWORD'],
         os.environ['MYSQL_DATABASE'])
 
@@ -20,8 +20,7 @@ def get_value_from_id(db, db_id):
         cursor.execute(query)
         db.commit()
 
-        value = cursor.fetchone()
-        return str(value[0][0])
+        return str(cursor.fetchone()[0])
     except: # Try again next time
         print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'"
         print "     - More details: ", sys.exc_info()[0]

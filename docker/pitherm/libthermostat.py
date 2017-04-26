@@ -48,7 +48,7 @@ def setup_io():
     io.setup(COOL_PIN, io.OUT, initial=OFF)
 
 def open_db():
-    return sql.connect('db', 'root',
+    return sql.connect('127.0.0.1', 'root',
         os.environ['MYSQL_ROOT_PASSWORD'],
         os.environ['MYSQL_DATABASE'])
 
@@ -69,8 +69,6 @@ def read_sensor_file():
                 break
             else:
                 count += 1
-                subprocess.call(["modprobe", "w1-gpio"])
-                subprocess.call(["modprobe", "w1-therm"])
                 time.sleep(30)
                 continue
         
@@ -114,7 +112,7 @@ def get_value_from_id(db, db_id):
         cursor.execute(query)
         db.commit()
 
-        value = cursor.fetchone()
+        return str(cursor.fetchone()[0])
     except: # Try again next time
         print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'"
         print "     - More details: ", sys.exc_info()[0]
@@ -215,9 +213,11 @@ def fan(db,status):
 def check_occupancy(db):
     # Get last occupied
     result = get_value_from_id(db, LAST_OCCUPIED_ID)
-    last_occupied = datetime.datetime.strptime(result, '%Y-%m-%d %H:%M:%S')
-    if last_occupied < (datetime.datetime.now() - datetime.timedelta(minutes=OCCUPIED_TIMEOUT)):
-        r.close()
+    if result:
+        last_occupied = datetime.datetime.strptime(result, '%Y-%m-%d %H:%M:%S') 
+        if last_occupied < (datetime.datetime.now() - datetime.timedelta(minutes=OCCUPIED_TIMEOUT)):
+            return False
+    else:
         return False
 
     set_value_in_db(db, OCCUPIED_ID, 'True')
