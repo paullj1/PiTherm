@@ -57,3 +57,9 @@ coverage.xml
 Session.vim
 .netrwhist
 *~
+
+## Pitherm Secrets
+.env
+
+homebridge/config.json
+homebridge/plugins.txt
