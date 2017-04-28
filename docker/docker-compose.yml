@@ -36,7 +36,7 @@ services:
       - radar
       - pitherm
   homebridge:
-    image: vividboarder/rpi-homebridge
+    build: ./homebridge/
     restart: always
     env_file: .env
     network_mode: "host"

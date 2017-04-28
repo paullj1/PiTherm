@@ -7,8 +7,8 @@ MAINTAINER Paul Jordan <paullj1@gmail.com>
 #HEALTHCHECK --interval=5m --timeout=3s \
   #CMD ps aux | grep -v grep | grep pitherm.py || exit 1
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
         avahi-daemon \
         avahi-discover \
         build-essential \
@@ -33,6 +33,9 @@ RUN mkdir -p /var/run/dbus/
 USER root
 
 RUN mkdir -p /root/.homebridge
-ADD entrypoint.sh plugins.txt config.json /root/.homebridge/
+VOLUME /root/.homebridge
+WORKDIR /root/.homebridge
+
+ADD entrypoint.sh /root/.homebridge/entrypoint.sh
 
 CMD /root/.homebridge/entrypoint.sh
