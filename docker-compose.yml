@@ -9,11 +9,14 @@ services:
       - "3306"
     volumes:
       - "db:/var/lib/mysql"
+      - /etc/localtime:/etc/localtime
   radar:
     build: ./radar/
     restart: always
     env_file: .env
     network_mode: "host"
+    volumes:
+      - /etc/localtime:/etc/localtime
   pitherm:
     build: ./pitherm/
     restart: always
@@ -25,6 +28,8 @@ services:
       - "/dev/mem:/dev/mem"
     cap_add:
       - SYS_RAWIO
+    volumes:
+      - /etc/localtime:/etc/localtime
   web:
     build: ./web/
     restart: always
@@ -35,6 +40,8 @@ services:
     depends_on:
       - radar
       - pitherm
+    volumes:
+      - /etc/localtime:/etc/localtime
   homebridge:
     build: ./homebridge/
     restart: always
@@ -44,9 +51,9 @@ services:
       - "51826:51826"
       - "5353:5353"
     volumes:
+      - /etc/localtime:/etc/localtime
       - ./homebridge/config.json:/root/.homebridge/config.json
       - ./homebridge/plugins.txt:/root/.homebridge/plugins.txt
-      - /etc/localtime:/etc/localtime
 
 volumes:
   db:
