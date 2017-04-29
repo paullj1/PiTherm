@@ -1,7 +1,10 @@
 #!/usr/bin/python
 import RPi.GPIO as io
 import MySQLdb as sql
-import datetime
+import requests
+
+from datetime import datetime, timedelta
+import json
 import sys
 import time
 import subprocess
@@ -39,6 +42,8 @@ HEAT_STATUS_ID = 19
 COOL_STATUS_ID = 20
 FAN_STATUS_ID = 21
 
+SYSTEM_ON = False
+
 # Init GPIO
 def setup_io():
     io.setmode(io.BCM)
@@ -64,7 +69,7 @@ def read_sensor_file():
             f.close()
         except:
             if count > 10:
-                print str(datetime.datetime.now()) + ": IO error getting indoor temperature... shutting down"
+                print str(datetime.now()) + ": IO error getting indoor temperature... shutting down"
                 print "     - More details: ", sys.exc_info()[0]
                 break
             else:
@@ -114,16 +119,18 @@ def get_value_from_id(db, db_id):
 
         return str(cursor.fetchone()[0])
     except: # Try again next time
-        print str(datetime.datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'"
+        print str(datetime.now()) + ": Error getting db_id: '"+str(db_id)+"'"
         print "     - More details: ", sys.exc_info()[0]
         return ""
 
 def set_value_in_db(db, db_id, value):
     try:
         query = "UPDATE  `thermostat`.`status` SET  `value` =  '"+str(value)+"' WHERE  `status`.`id` ="+str(db_id)+";"
-        db.query(query)
+        cursor = db.cursor()
+        cursor.execute(query)
+        db.commit()
     except: # Try again next time
-        print str(datetime.datetime.now()) + ": Error setting db_id: '"+str(db_id)+"' to '"+value+"'"
+        print str(datetime.now()) + ": Error setting db_id: '"+str(db_id)+"' to '"+value+"'"
         print "     - More details: ", sys.exc_info()[0]
 
 def fan_status(db):
@@ -141,7 +148,7 @@ def override_status(db):
 # Get Setpoint
 def get_setpoint(db,mode,occupied,override):
     # Day or Night?
-    now = datetime.datetime.now()
+    now = datetime.now()
     day = now.replace(hour=DAY, minute=0, second=0, microsecond=0)
     night = now.replace(hour=NIGHT, minute=0, second=0, microsecond=0)
     if now > day and now < night:
@@ -218,8 +225,8 @@ def check_occupancy(db):
     # Get last occupied
     result = get_value_from_id(db, LAST_OCCUPIED_ID)
     if result:
-        last_occupied = datetime.datetime.strptime(result, '%Y-%m-%d %H:%M:%S') 
-        if last_occupied < (datetime.datetime.now() - datetime.timedelta(minutes=OCCUPIED_TIMEOUT)):
+        last_occupied = datetime.strptime(result, '%Y-%m-%d %H:%M:%S') 
+        if last_occupied < (datetime.now() - timedelta(minutes=OCCUPIED_TIMEOUT)):
             return False
     else:
         return False
@@ -229,6 +236,8 @@ def check_occupancy(db):
 # end check_occupancy()
 
 def update_pins(db, mode, fan_on, setpoint, indoor_temp):
+    global SYSTEM_ON
+
     if get_value_from_id(db, HEAT_STATUS_ID) == 'off' and get_value_from_id(db, COOL_STATUS_ID) == 'off':
         variance = float(get_value_from_id(db, VARIANCE_ID))
     else:
@@ -238,17 +247,60 @@ def update_pins(db, mode, fan_on, setpoint, indoor_temp):
     fan(db, fan_on)
 
     if mode == 'cool':
-        if indoor_temp > (setpoint + variance): cool(db, True)
-        else: cool(db, False)
-        return
+        if indoor_temp > (setpoint + variance): 
+            if not SYSTEM_ON: log_change(db)
+            cool(db, True)
+        else: 
+            if SYSTEM_ON: log_change(db)
+            cool(db, False)
 
-    if mode == 'heat':
-        if indoor_temp < (setpoint - variance): heat(db, True)
-        else: heat(db, False)
-        return
+    elif mode == 'heat':
+        if indoor_temp < (setpoint - variance):
+            if not SYSTEM_ON: log_change(db)
+            heat(db, True)
+        else:
+            if SYSTEM_ON: log_change(db)
+            heat(db, False)
     
-    if mode == 'off':
+    elif mode == 'off':
+        if SYSTEM_ON: log_change(db)
         heat(db, False)
         cool(db, False)
 
 # end update_pins
+
+def log_change(db):
+    global SYSTEM_ON
+    SYSTEM_ON = False if SYSTEM_ON else True
+
+    try:
+        weather = json.loads(requests.get("http://localhost/weather.php").text)
+        status = json.loads(requests.get("http://localhost/home.php").text)
+
+        qry = """INSERT INTO `history` (`time_changed`, `outdoor_temp`,
+              `indoor_temp`, `wind_speed`, `wind_dir`, `weather_condition`,
+              `visibility`, `humidity`, `pressure`, `setpoint`, `system_mode`,
+              `cool`, `fan`, `heat`, `last_occupied`) 
+              VALUES ( '{}', {}, {}, {}, {}, '{}', {}, {},
+                      {}, {}, '{}', '{}', '{}', '{}', '{}');""".format(
+              datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+              weather["main"]["temp"], status['current_temp'],
+              weather["wind"]["speed"], weather["wind"]["deg"],
+              weather["weather"][0]["description"], weather["visibility"],
+              weather["main"]["humidity"], weather["main"]["pressure"],
+              status['current_setpoint'], status['mode'],
+              status['cool_status'], status['fan_status'],
+              status['heat_status'], status['last_occupied'])
+        cursor = db.cursor()
+        cursor.execute(qry)
+        db.commit()
+
+    except requests.exceptions.ConnectionError as e:
+        SYSTEM_ON = False if SYSTEM_ON else True # Will retry on next update
+        print str(datetime.now()) + ": Logging error.  Couldn't get remote data."
+        print "     - More details: ", sys.exc_info()[0]
+        
+    except: # Try again next time
+        print str(datetime.now()) + ": Logging error"
+        print "     - More details: ", sys.exc_info()[0]
+

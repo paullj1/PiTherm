@@ -17,7 +17,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /pitherm
-ADD pitherm.py libthermostat.py requirements.txt /pitherm/
+ADD requirements.txt /pitherm/
 RUN pip install -r /pitherm/requirements.txt
+
+ADD pitherm.py libthermostat.py /pitherm/
 
 CMD [ "python", "/pitherm/pitherm.py" ]

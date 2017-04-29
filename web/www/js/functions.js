@@ -42,7 +42,6 @@ $(document).ready(function() {
 	});
 
 	$(".settings-form-radios").bind( "click", function(event) {
-		//console.dir(event); // for debug
 		set_val_db(document.MODE_ID, event.currentTarget.value);
 		get_data();
 	});
@@ -56,60 +55,31 @@ function get_data() {
 }
 
 function get_local() {
-  // Get local DB stuff
-	$.ajax({
-		type : "POST",
-		async: false,
-		url : "home.php",
-		cache : false,
-		dataType : "json",
-		success : update_local,
-		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
-	});
-
-	// Update info regularly
+	$.ajax("home.php", {
+      type: "POST",
+      async: false,
+      dataType: "json",
+      success: update_local
+  });
 	setTimeout(get_local, LOCAL_REFRESH_RATE);
 }
 
 function get_weather() {
-  // Get Weather data
-	$.ajax({
-		type : "GET",
-		async: false,
-		url : "http://api.openweathermap.org/data/2.5/weather",
-		cache : false,
-		dataType : "json",
-		data : {
-			q: document.LOCATION,
-			APPID: document.APIKEY,
-			units: "imperial"
-		},
-		success : update_weather,
-		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
-	});
-
-	// Update info regularly
+	$.get("weather.php", update_weather, "json");
 	setTimeout(get_weather, WEATHER_REFRESH_RATE);
 }
 
 function get_settings() {
-	$.ajax({
-		type : "POST",
-		async: false,
-		url : "settings.php",
-		cache : false,
-		dataType : "json",
-		success : update_settings,
-		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
-	});
-
-	// Update info regularly
+	$.ajax("settings.php", {
+      async: "POST",
+      async: false,
+      dataType: "json",
+      success: update_settings
+  });
 	setTimeout(get_settings, SETTINGS_REFRESH_RATE);
 }
 
 function update_weather(data) {
-	//console.dir(data);
-
 	$("#weather-city-container").html(data.name);
 	$("#weather-img-container").html("<img src='http://openweathermap.org/img/w/"+data.weather[0].icon+".png'></img>");
 	$("#weather-temp-container").html("<h5>"+data.main.temp+"º F</h5>");
@@ -118,7 +88,6 @@ function update_weather(data) {
 }
 
 function update_local(data) {
-	//console.dir(data);
 	$("#current-temp-container").text(Math.floor(data.current_temp));
 	$("#current-setpoint-container").text((setpoint = data.current_setpoint));
 
@@ -149,7 +118,6 @@ function update_local(data) {
 }
 
 function update_settings(data) {
-	//console.dir(data); // for debug
 	if (data.fan == "on") $("#fan-switch").prop("checked", true);
 	else $("#fan-switch").prop("checked", false);
 
@@ -192,23 +160,17 @@ function update_settings(data) {
 }
 
 function get_setpoint(id) {
-	$.ajax({
-		type : "POST",
-		async: false,
-		url : "setpoint_changer.php",
-		cache : false,
-		dataType : "json",
-		data : {
-			id: id
-		},
-		success : update_setpoint,
-		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
-	});
+  $.ajax("setpoint_changer.php", {
+      type: "POST",
+      async: false,
+      dataType: "json",
+      data: { id: id },
+      success: update_setpoint
+  });
   modify_setpoint_id = id;
 }
 
 function update_setpoint(data) {
-	//console.dir(data);
 	$("#change-setpoint-label").html("<h5>"+data.label+": </h5>");
 	$("#change-setpoint-container").html("<h5>"+data.value+"º F</h5>");
   modify_setpoint_value = data.value; // MESSY! need a better way to do this
@@ -226,27 +188,17 @@ function save_ip_addresses() {
 /************************/
 
 function set_val_db(id,value) {
-	$.ajax({
-		type : "POST",
-		async: false,
-		url : "update.php",
-		cache : false,
-		dataType : "json",
-		data : {
-			id: id,
-			value: value
-		},
-		success : (id == document.IP_ADDRESSES) ? db_update_ip : db_update_success,
-		error: function(xhr) { console.log("AJAX request failed: " + xhr.status); }
-	});
-}
-
-function db_update_success() {
-	console.log("Successufully Updated DB");
+  $.ajax("update.php", { 
+      type: "POST",
+      data: { id: id, value: value }, 
+      async: false,
+      dataType: "json",
+      success: (id == document.IP_ADDRESSES) ? db_update_ip : null
+  });
 }
 
 function db_update_ip() {
-	alert("Successfully Updated MAC Addresses");
+	alert("Successfully Updated IP Addresses");
 }
 
 // Button Handler

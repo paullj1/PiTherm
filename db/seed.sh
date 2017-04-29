@@ -32,6 +32,27 @@ cat > "$tempSqlFile" <<-EOSQL
 		(19, 'Heat Status (on/off)', 'off'),
 		(20, 'Cool Status (on/off)', 'off'),
 		(21, 'Fan Status (on/off)', 'off');
+
+	CREATE TABLE IF NOT EXISTS \`history\` (
+		\`id\` int(11) NOT NULL AUTO_INCREMENT,
+		\`time_changed\` datetime COLLATE utf8_bin NOT NULL,
+		\`outdoor_temp\` float COLLATE utf8_bin NOT NULL,
+		\`indoor_temp\` float COLLATE utf8_bin NOT NULL,
+		\`wind_speed\` float COLLATE utf8_bin NOT NULL,
+		\`wind_dir\` smallint COLLATE utf8_bin NOT NULL,
+		\`weather_condition\` varchar(128) COLLATE utf8_bin NOT NULL,
+		\`visibility\` smallint COLLATE utf8_bin NOT NULL,
+		\`humidity\` smallint COLLATE utf8_bin NOT NULL,
+		\`pressure\` smallint COLLATE utf8_bin NOT NULL,
+		\`setpoint\` smallint COLLATE utf8_bin NOT NULL,
+		\`system_mode\` varchar(16) COLLATE utf8_bin NOT NULL,
+		\`cool\` varchar(3) COLLATE utf8_bin NOT NULL,
+		\`fan\` varchar(3) COLLATE utf8_bin NOT NULL,
+		\`heat\` varchar(3) COLLATE utf8_bin NOT NULL,
+		\`last_occupied\` datetime COLLATE utf8_bin NOT NULL,
+		PRIMARY KEY (\`id\`)
+	) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=22 ;
+
 EOSQL
 
 mysql --user=root --password=$MYSQL_ROOT_PASSWORD < /tmp/seed.sql
