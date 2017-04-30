@@ -27,13 +27,13 @@
     $target_temp = intval($con->real_escape_string($_GET['t']), 10);
     if ($target_temp > 50 && $target_temp < 100) {
       # Set override to True
-      $qry_str = 'UPDATE `status` SET `value` ="'.$target_temp.'" WHERE 
-                  `status`.`id` ='.CURRENT_SETPOINT_ID.';';
+      $qry_str = 'UPDATE `status` SET `value` ="True" WHERE 
+                  `status`.`id` ='.OVERRIDE_ID.';';
       query_db($con, $qry_str);
 
       # Set temperature
-      $qry_str = 'UPDATE `status` SET `value` ="True" WHERE 
-                  `status`.`id` ='.OVERRIDE_ID.';';
+      $qry_str = 'UPDATE `status` SET `value` ="'.$target_temp.'" WHERE 
+                  `status`.`id` ='.CURRENT_SETPOINT_ID.';';
       query_db($con, $qry_str);
 
       http_response_code(201);
