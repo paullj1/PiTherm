@@ -12,11 +12,9 @@
       {
          "accessory": "Thermostat",
          "name": "PiTherm",
-         "apiroute": "http://localhost",
+         "apiroute": "http://localhost/",
          "maxTemp": 25,
-         "minTemp": 15,
-         "maxTemp": "26",
-         "minTemp": "15"
+         "minTemp": 15
        }, {
          "accessory": "Chamberlain",
          "name": "Garage Door",

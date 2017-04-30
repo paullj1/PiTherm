@@ -8,6 +8,7 @@ HEALTHCHECK --interval=1m --timeout=5s \
   CMD curl -f http://localhost/ || exit 1
 
 RUN docker-php-ext-install mysqli
+RUN a2enmod rewrite
 
 COPY ./www/ /var/www/html/
 

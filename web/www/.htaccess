@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# Homebridge-Thermostat API Routes
+RewriteRule ^status$ status.php
+RewriteRule ^targetHeatingCoolingState/(.+)$ set_mode.php?m=$1 
+RewriteRule ^targetTemperature/(.+)$ set_mode.php?t=$1 
+
+# Standard URL Rewrites
+RewriteRule ^$ index.php
+RewriteRule ^index$ index.php
+RewriteRule ^home$ home.php
+RewriteRule ^setpoint_changer$ setpoint_changer.php
+RewriteRule ^settings$ settings.php
+RewriteRule ^update$ update.php
+RewriteRule ^weather$ weather.php

@@ -55,7 +55,7 @@ function get_data() {
 }
 
 function get_local() {
-	$.ajax("home.php", {
+	$.ajax("home", {
       type: "POST",
       async: false,
       dataType: "json",
@@ -65,12 +65,12 @@ function get_local() {
 }
 
 function get_weather() {
-	$.get("weather.php", update_weather, "json");
+	$.get("weather", update_weather, "json");
 	setTimeout(get_weather, WEATHER_REFRESH_RATE);
 }
 
 function get_settings() {
-	$.ajax("settings.php", {
+	$.ajax("settings", {
       async: "POST",
       async: false,
       dataType: "json",
@@ -160,7 +160,7 @@ function update_settings(data) {
 }
 
 function get_setpoint(id) {
-  $.ajax("setpoint_changer.php", {
+  $.ajax("setpoint_changer", {
       type: "POST",
       async: false,
       dataType: "json",
@@ -188,7 +188,7 @@ function save_ip_addresses() {
 /************************/
 
 function set_val_db(id,value) {
-  $.ajax("update.php", { 
+  $.ajax("update", { 
       type: "POST",
       data: { id: id, value: value }, 
       async: false,
