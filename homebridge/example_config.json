@@ -12,7 +12,7 @@
       {
          "accessory": "Thermostat",
          "name": "PiTherm",
-         "apiroute": "http://localhost/",
+         "apiroute": "http://localhost",
          "maxTemp": 25,
          "minTemp": 15
        }, {
