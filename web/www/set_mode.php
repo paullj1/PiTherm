@@ -26,7 +26,7 @@
 
     # Comes in Celcius
     $target_temp = floatval($con->real_escape_string($_GET['t']));
-    $target_temp = ($target_temp * (9/5)) + 32;
+    $target_temp = round(($target_temp * (9/5)) + 32);
 
     if ($target_temp > 50 && $target_temp < 100) {
       # Set override to True
