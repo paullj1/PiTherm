@@ -20,11 +20,14 @@
     }
     $qry_str .= '" WHERE `status`.`id` ='.MODE_ID.';';
     query_db($con, $qry_str);
-    http_response_code(201);
+    http_response_code(200);
 
   } else if ( isset($_GET["t"]) ) {
 
-    $target_temp = intval($con->real_escape_string($_GET['t']), 10);
+    # Comes in Celcius
+    $target_temp = floatval($con->real_escape_string($_GET['t']));
+    $target_temp = ($target_temp * (9/5)) + 32
+
     if ($target_temp > 50 && $target_temp < 100) {
       # Set override to True
       $qry_str = 'UPDATE `status` SET `value` ="True" WHERE 
@@ -36,7 +39,7 @@
                   `status`.`id` ='.CURRENT_SETPOINT_ID.';';
       query_db($con, $qry_str);
 
-      http_response_code(201);
+      http_response_code(200);
     } else {
       http_response_code(400);
     }
