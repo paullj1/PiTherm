@@ -5,7 +5,8 @@
   require_once "constants.php";
 
   $qry_str = 'SELECT  `value` FROM `status` WHERE `id` 
-    IN ('.CURRENT_SETPOINT_ID.', '.CURRENT_TEMP_ID.', '.MODE_ID.') ORDER BY `id` ASC;';
+    IN ('.CURRENT_SETPOINT_ID.', '.CURRENT_TEMP_ID.', '.MODE_ID.',
+    '.COOL_STATUS_ID.', '.HEAT_STATUS_ID.') ORDER BY `id` ASC;';
 
   $result = query_db($con, $qry_str);
 
@@ -21,20 +22,29 @@
   $entry = fetch_array_db($result);
   switch ($entry['value']) {
     case "heat":
-      $state = 1;
+      $return["targetHeatingCoolingState"] = 1;
       break;
     case "cool":
-      $state = 2;
+      $return["targetHeatingCoolingState"] = 2;
       break;
     default:
-      $state = 0;
+      $return["targetHeatingCoolingState"] = 0;
   }
-  $return["currentHeatingCoolingState"] = $state;
-  $return["targetHeatingCoolingState"] = $state;
 
-  $weather = json_decode(get_weather(), true);
-  $return["targetRelativeHumidity"] = $weather['main']['humidity'];
-  $return["currentRelativeHumidity"] = $weather['main']['humidity'];
+  # 19
+  $entry = fetch_array_db($result);
+  $heat_status = $entry['value'];
+
+  # 20
+  $entry = fetch_array_db($result);
+  $cool_status = $entry['value'];
+
+  if ($heat_status == 'on')
+    $return["currentHeatingCoolingState"] = 1;
+  else if ($cool_status == 'on')
+    $return["currentHeatingCoolingState"] = 2;
+  else
+    $return["currentHeatingCoolingState"] = 0;
 
   echo json_encode($return);
 ?>

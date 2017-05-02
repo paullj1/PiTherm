@@ -28,7 +28,7 @@
     $target_temp = floatval($con->real_escape_string($_GET['t']));
     $target_temp = round(($target_temp * (9/5)) + 32);
 
-    if ($target_temp > 50 && $target_temp < 100) {
+    if ($target_temp > 50 && $target_temp < 90) {
       # Set override to True
       $qry_str = 'UPDATE `status` SET `value` ="True" WHERE 
                   `status`.`id` ='.OVERRIDE_ID.';';
