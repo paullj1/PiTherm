@@ -10,6 +10,9 @@ services:
     volumes:
       - "db:/var/lib/mysql"
       - /etc/localtime:/etc/localtime
+    logging:
+      options:
+        max-size: 10m
   radar:
     build: ./radar/
     restart: always
@@ -17,6 +20,9 @@ services:
     network_mode: "host"
     volumes:
       - /etc/localtime:/etc/localtime
+    logging:
+      options:
+        max-size: 10m
   pitherm:
     build: ./pitherm/
     restart: always
@@ -30,6 +36,9 @@ services:
       - SYS_RAWIO
     volumes:
       - /etc/localtime:/etc/localtime
+    logging:
+      options:
+        max-size: 10m
   web:
     build: ./web/
     restart: always
@@ -42,6 +51,9 @@ services:
       - pitherm
     volumes:
       - /etc/localtime:/etc/localtime
+    logging:
+      options:
+        max-size: 10m
   homebridge:
     build: ./homebridge/
     restart: always
@@ -54,6 +66,9 @@ services:
       - /etc/localtime:/etc/localtime
       - ./homebridge/config.json:/root/.homebridge/config.json
       - ./homebridge/plugins.txt:/root/.homebridge/plugins.txt
+    logging:
+      options:
+        max-size: 10m
 
 volumes:
   db:
