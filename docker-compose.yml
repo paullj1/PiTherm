@@ -11,6 +11,7 @@ services:
       - "db:/var/lib/mysql"
       - /etc/localtime:/etc/localtime
     logging:
+      driver: "${LOGGING}"
       options:
         max-size: 10m
   radar:
@@ -21,6 +22,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
+      driver: "${LOGGING}"
       options:
         max-size: 10m
   pitherm:
@@ -37,6 +39,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
+      driver: "${LOGGING}"
       options:
         max-size: 10m
   web:
@@ -52,6 +55,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
+      driver: "${LOGGING}"
       options:
         max-size: 10m
   homebridge:
@@ -67,6 +71,7 @@ services:
       - ./homebridge/config.json:/root/.homebridge/config.json
       - ./homebridge/plugins.txt:/root/.homebridge/plugins.txt
     logging:
+      driver: "${LOGGING}"
       options:
         max-size: 10m
 
