@@ -13,20 +13,22 @@ import urllib
 import os
 
 # Constants
-ON = io.LOW
-OFF = io.HIGH
-HEAT_PIN = 23
-FAN_PIN = 24
-COOL_PIN = 25
-NIGHT = 21
-DAY = 5
-OCCUPIED_TIMEOUT = 30
+ON = io.LOW   # Relay specific ON setting
+OFF = io.HIGH # Relay specific OFF setting
+HEAT_PIN = 23 # GPIO pin to turn on heating
+FAN_PIN = 24  # GPIO pin to turn on fan
+COOL_PIN = 25 # GPIO pin to turn on cooling
+NIGHT = 21    # When should the system change to night mode
+COOL_DAY = 7  # Allow warming up after we wake up
+HEAT_DAY = 5  # Start heating up before we wake up
+OCCUPIED_TIMEOUT = 30  # How long to wait before changing occupied status
 
 # PLIST Constants
 CURRENT_TEMP_ID = 1
 CURRENT_SETPOINT_ID = 2
 MODE_ID = 3
 VARIANCE_ID = 4
+UNITS_ID = 5
 FAN_AUTO_ID = 6
 LAST_OCCUPIED_ID = 7
 UNOCCUPIED_HEAT_ID = 8
@@ -104,7 +106,9 @@ def get_temp(db):
     temp_string = raw_text[1][equals_pos+2:]
     temp_c = float(temp_string) / 1000.0
     temp_f = temp_c * 9.0 / 5.0 + 32.0
-    indoor_temp = temp_f # TODO make this dependent upon db val
+
+    units = get_value_from_id(db, UNITS_ID)
+    indoor_temp = temp_f if units == 'F' else temp_c
 
     # Write it out to database
     set_value_in_db(db, CURRENT_TEMP_ID, indoor_temp)
@@ -149,6 +153,7 @@ def override_status(db):
 def get_setpoint(db,mode,occupied,override):
     # Day or Night?
     now = datetime.now()
+    DAY = COOL_DAY if mode == 'cool' else HEAT_DAY
     day = now.replace(hour=DAY, minute=0, second=0, microsecond=0)
     night = now.replace(hour=NIGHT, minute=0, second=0, microsecond=0)
     if now > day and now < night:

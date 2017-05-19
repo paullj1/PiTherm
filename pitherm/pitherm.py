@@ -38,7 +38,7 @@ while True:
 
     # Update output based on current state
     therm.update_pins(db, mode, fan_on, setpoint, indoor_temp)
-    time.sleep(5)	
+    time.sleep(5)
 # end while
 
 io.cleanup();
