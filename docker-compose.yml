@@ -1,7 +1,8 @@
 version: "3"
 services:
   db:
-    build: ./db/
+    image: registry.gitlab.com/paullj1/pitherm:db
+    #build: ./db/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -15,7 +16,8 @@ services:
       options:
         max-size: 10m
   radar:
-    build: ./radar/
+    image: registry.gitlab.com/paullj1/pitherm:radar
+    #build: ./radar/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -26,7 +28,8 @@ services:
       options:
         max-size: 10m
   pitherm:
-    build: ./pitherm/
+    image: registry.gitlab.com/paullj1/pitherm:pitherm
+    #build: ./pitherm/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -43,7 +46,8 @@ services:
       options:
         max-size: 10m
   web:
-    build: ./web/
+    image: registry.gitlab.com/paullj1/pitherm:web
+    #build: ./web/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -59,7 +63,8 @@ services:
       options:
         max-size: 10m
   homebridge:
-    build: ./homebridge/
+    image: registry.gitlab.com/paullj1/pitherm:homebridg
+    #build: ./homebridge/
     restart: always
     env_file: .env
     network_mode: "host"
