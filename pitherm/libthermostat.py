@@ -232,6 +232,7 @@ def check_occupancy(db):
     if result:
         last_occupied = datetime.strptime(result, '%Y-%m-%d %H:%M:%S') 
         if last_occupied < (datetime.now() - timedelta(minutes=OCCUPIED_TIMEOUT)):
+	    set_value_in_db(db, OCCUPIED_ID, 'False')
             return False
     else:
         return False
