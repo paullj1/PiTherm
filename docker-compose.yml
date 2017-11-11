@@ -1,8 +1,7 @@
 version: "3"
 services:
   db:
-    image: registry.gitlab.com/paullj1/pitherm:db
-    #build: ./db/
+    build: ./db/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -12,24 +11,20 @@ services:
       - "db:/var/lib/mysql"
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
         max-size: 10m
   radar:
-    image: registry.gitlab.com/paullj1/pitherm:radar
-    #build: ./radar/
+    build: ./radar/
     restart: always
     env_file: .env
     network_mode: "host"
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
         max-size: 10m
   pitherm:
-    image: registry.gitlab.com/paullj1/pitherm:pitherm
-    #build: ./pitherm/
+    build: ./pitherm/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -42,12 +37,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
         max-size: 10m
   web:
-    image: registry.gitlab.com/paullj1/pitherm:web
-    #build: ./web/
+    build: ./web/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -59,12 +52,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
         max-size: 10m
   homebridge:
-    image: registry.gitlab.com/paullj1/pitherm:homebridg
-    #build: ./homebridge/
+    build: ./homebridge/
     restart: always
     env_file: .env
     network_mode: "host"
@@ -76,7 +67,6 @@ services:
       - ./homebridge/config.json:/root/.homebridge/config.json
       - ./homebridge/plugins.txt:/root/.homebridge/plugins.txt
     logging:
-      driver: "${LOGGING}"
       options:
         max-size: 10m
 
