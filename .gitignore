@@ -63,3 +63,5 @@ Session.vim
 
 homebridge/config.json
 homebridge/plugins.txt
+
+node_modules

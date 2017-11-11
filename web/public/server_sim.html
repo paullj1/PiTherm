@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <title>PiTherm</title>
+    
+    <script src="/js/gun.min.js"></script>
+    <script src="/js/lodash.min.js"></script>
+
+    <link href="/css/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <div class='header'>
+        <h1>Pi Therm Server Simulator</h1>
+      </div>
+      <br /> <br /> <br /> <br />
+      current_temp    : <input v-model='server_vars.current_temp' @input='pushUpdates' ></input><br />     
+      last_occupied   : <input v-model='server_vars.last_occupied' @input='pushUpdates' ></input><br />     
+      occupied        : <input v-model='server_vars.occupied' @input='pushUpdates' ></input><br />     
+      heat_status     : <input v-model='server_vars.heat_status' @input='pushUpdates' ></input><br />     
+      cool_status     : <input v-model='server_vars.cool_status' @input='pushUpdates' ></input><br />     
+      fan_status      : <input v-model='server_vars.fan_status' @input='pushUpdates' ></input><br />     
+    </div>
+
+    <script src="/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+      var gun = new Gun(['http://' + document.location.host + '/gun']);
+      var server_vars_ref = 'pitherm/server_vars';
+
+      var app = new Vue({
+          el: '#app',
+          data: {
+            server_vars: {}
+          },
+          methods: {
+            pushUpdates: _.debounce(
+              function () {
+                gun.get(server_vars_ref).put(this.server_vars)
+              },
+              500
+            )
+          }
+      });
+
+      // Initialize listener
+      gun.get(server_vars_ref).on(function (data) {
+        app.server_vars = data;
+      }, true);
+
+    </script>
+  </body>
+
+</html>

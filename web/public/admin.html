@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <title>PiTherm</title>
+    
+    <script src="/js/gun.min.js"></script>
+    <script src="/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/lodash.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+
+    <link href="/css/styles.css" rel="stylesheet">
+    <link href="/css/googlefonts.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div id="app">
+      <div class='header'>
+        <h1>Pi Therm</h1>
+      </div>
+      <br /> <br /> <br /> <br />
+
+      Current Setpoint:              <input @input='pushDebounce' v-model='client_vars.current_setpoint'></input><br />
+      Mode:                          <input @input='pushDebounce' v-model='client_vars.mode'></input><br />
+      Variance:                      <input @input='pushDebounce' v-model='client_vars.variance'></input><br />
+      Units:                         <input @input='pushDebounce' v-model='client_vars.units'></input><br />
+      Fan:                           <input @input='pushDebounce' v-model='client_vars.fan'></input><br />
+      unoccupied_heat_set_point:     <input @input='pushDebounce' v-model='client_vars.unoccupied_heat_set_point'></input><br />
+      unoccupied_cool_set_point:     <input @input='pushDebounce' v-model='client_vars.unoccupied_cool_set_point'></input><br />
+      night_occupied_heat_set_point: <input @input='pushDebounce' v-model='client_vars.night_occupied_heat_set_point'></input><br />
+      day_occupied_heat_set_point:   <input @input='pushDebounce' v-model='client_vars.day_occupied_heat_set_point'></input><br />
+      night_occupied_cool_set_point: <input @input='pushDebounce' v-model='client_vars.night_occupied_cool_set_point'></input><br />
+      day_occupied_cool_set_point:   <input @input='pushDebounce' v-model='client_vars.day_occupied_cool_set_point'></input><br />
+      IP Addresses:                  <input @input='pushDebounce' v-model='client_vars.ip_addresses '></input><br />
+      Override:                      <input @input='pushDebounce' v-model='client_vars.override'></input>
+    </div>
+  </body>
+  <script src="/js/main.js"></script>
+</html>
