@@ -194,21 +194,33 @@ span.celcius {
 }
 
 i.occupied {
-  font-size: 0.8em;
+  font-size: 1.0em;
   color: #0f0;
   position: absolute;
-  top: 115px;
-  left: 115px;
+  top: 113px;
+  left: 113px;
 }
 
 i.fan {
-  transform: rotate(60deg);
-  font-size: 0.8em;
+  font-size: 1.0em;
   color: #00f;
   position: absolute;
-  top: 115px;
-  left: 25px;
+  top: 113px;
+  left: 23px;
 }
+
+@keyframes rotate {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+i.fan {
+	animation-name:             rotate; 
+	animation-duration:         2s; 
+	animation-iteration-count:  infinite;
+	animation-timing-function:  linear;
+}
+
 
 i.fan-button {
   transform: rotate(60deg);
@@ -219,17 +231,17 @@ i.fan-button {
 }
 
 i.settings {
-  font-size: 0.8em;
+  font-size: 1.0em;
   position: absolute;
   top: 10px;
-  left: 70px;
+  left: 68px;
 }
 
 i.mode {
-  font-size: 0.8em;
+  font-size: 1.0em;
   position: absolute;
-  top: 130px;
-  left: 70px;
+  top: 128px;
+  left: 68px;
 }
 
 i.off  { transition: 0.4s; color: #888; }

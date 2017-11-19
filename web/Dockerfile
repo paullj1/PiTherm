@@ -5,7 +5,7 @@ FROM arm32v6/node:alpine
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=5m --timeout=3s \
-  CMD curl -f http://localhost:8080/ || exit 1
+  CMD echo -ne "HEAD / HTTP/1.0\r\n\r\n" | nc -n -i 1 localhost 8080
 
 RUN apk add --no-cache python make g++
 
@@ -25,5 +25,3 @@ RUN mkdir /opt/pitherm/data
 EXPOSE 8080
 CMD npm start
 
-# FUTURE HEALTHCHECK CMD:
-# echo -ne "HEAD / HTTP/1.0\r\n\r\n" | nc -n -i 1 localhost 8080
