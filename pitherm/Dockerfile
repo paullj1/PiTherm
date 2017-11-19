@@ -1,25 +1,21 @@
 # PiTherm Dockerfile
 # VERSION 1.0
 
-FROM resin/rpi-raspbian:jessie
+FROM arm32v6/node:alpine
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=5m --timeout=3s \
-  CMD ps aux | grep -v grep | grep pitherm.py || exit 1
+  CMD ps aux | grep -v grep | grep pitherm.js || exit 1
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        python \
-        python-dev \
-        python-pip \
-        gcc \
-        libmysqlclient-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache python make g++
 
-RUN mkdir /pitherm
-ADD requirements.txt /pitherm/
-RUN pip install -r /pitherm/requirements.txt
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
 
-ADD pitherm.py libthermostat.py /pitherm/
+RUN mkdir -p /opt/pitherm/ && \
+    mv /tmp/node_modules /opt/pitherm/
 
-CMD [ "python", "/pitherm/pitherm.py" ]
+WORKDIR /opt/pitherm/
+ADD package.json pitherm.js /opt/pitherm/
+
+CMD npm start
