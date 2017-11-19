@@ -1,18 +1,5 @@
 version: "3"
 services:
-  db:
-    build: ./db/
-    restart: always
-    env_file: .env
-    network_mode: "host"
-    expose:
-      - "3306"
-    volumes:
-      - "db:/var/lib/mysql"
-      - /etc/localtime:/etc/localtime
-    logging:
-      options:
-        max-size: 10m
   radar:
     build: ./radar/
     restart: always
@@ -71,4 +58,4 @@ services:
         max-size: 10m
 
 volumes:
-  db:
+  web:
