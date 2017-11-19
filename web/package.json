@@ -1,7 +1,7 @@
 {
-  "name": "PiTherm",
-  "version": "0.1.0",
-  "description": "Raspberry Pi thermostat app.",
+  "name": "pitherm-web",
+  "version": "0.0.1",
+  "description": "Raspberry Pi thermostat app web front end.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,9 +13,13 @@
     "url": "git+https://github.com/paullj1/pitherm.git"
   },
   "keywords": [
-    "gun",
-    "raspberrypi"
+    "Raspbery",
+    "Pi",
+    "Thermostat",
+    "GPIO",
+    "Node"
   ],
+  "author": "Paul Jordan",
   "license": "(MIT)",
   "bugs": {
     "url": "https://github.com/paullj1/pitherm/issues"

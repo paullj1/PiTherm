@@ -76,8 +76,8 @@ $(document).ready(function() {
   var skew = 276/2;
 
   var flag = 0;
-  var x = 0;
-  var y = 0;
+  var polar = {};
+  var touchDist = 0;
   var scrollDist = 0;
   var messages_win_visible = false;
 
@@ -104,18 +104,19 @@ $(document).ready(function() {
       return;
     }
     scrollDist += event.deltaY;
-
-
   });
+
 
   $('#grip-wheel').on("touchstart", function() { 
     transitionToSetpoint();
     flag = 1; 
+    polar = calcPolar(event);
   });
 
   $('#grip-wheel').on("touchend", function() { 
     transitionToCurrentTemp();
-    flag = 0; x = 0; y = 0;
+    flag = 0;
+    touchDist = 0;
   });
 
   $('#grip-wheel').on("touchcancel", function() {
@@ -123,55 +124,54 @@ $(document).ready(function() {
     flag = 0; x = 0; y = 0;
   });
 
+  function calcPolar(event) {
+    var rect = event.target.getBoundingClientRect();
+    var x = (event.targetTouches[0].pageX - rect.left) - skew;
+    var y = skew - (event.targetTouches[0].pageY - rect.top);
+
+    r = Math.sqrt(x*x + y*y);
+    q = Math.atan2(y,x) * (180 / Math.PI);
+    q = (q < 0) ? q + 360 : q;
+    return { radius: r, theta: q };
+  }
+
+
   $('#grip-wheel').on("touchmove", function() {
     event.preventDefault();
     event.stopPropagation();
 
+    if (!checkCanChangeSetpoint()) { return; }
+
     // ignore multi-touch;
     if (event.touches.length > 1) { return; }
 
-    var rect = event.target.getBoundingClientRect();
-    var offsetX = event.targetTouches[0].pageX - rect.left;
-    var offsetY = event.targetTouches[0].pageY - rect.top;
+    var new_polar = calcPolar(event);
+    if (new_polar.radius < 50 || new_polar.radius > 180) { return; }
 
-    var a = x - (offsetX - skew);
-    var b = y - (skew - offsetY);
+    touchDist += (polar.theta - new_polar.theta);
+    if (flag == 1 && Math.abs(touchDist) > 30) {
 
-    var c = Math.sqrt( a*a + b*b );
-    if (c > 20 && flag == 1) {
-
-      if (!checkCanChangeSetpoint()) { return; }
-      
       var clockwise = true;
-      if (x >= 0 && y >= 0) {
-        if (a >= 0 && b <= 0) 
-          clockwise = false;
-        else if (a <= 0 && b >= 0)
+      // Handle crossover
+      if (Math.abs(polar.theta - new_polar.theta) > 180) {
+        if (polar.theta < 90 && new_polar.theta > 270) {
           clockwise = true;
-      } else if (x <= 0 && y >= 0) {
-        if (a >= 0 && b >= 0)
+        } else {
           clockwise = false;
-        else if (a <= 0 && b <= 0)
-          clockwise = true;
-      } else if (x >= 0 && y <= 0) {
-        if (a >= 0 && b >= 0)
-          clockwise = true;
-        else if (a <= 0 && b <= 0)
-          clockwise = false;
-      } else if (x <= 0 && y <= 0) {
-        if (a >= 0 && b <= 0)
-          clockwise = true;
-        else if (a <= 0 && b >= 0)
-          clockwise = false;
+        }
       } else {
-        return;
+        if (polar.theta - new_polar.theta > 1) {
+          clockwise = true;
+        } else {
+          clockwise = false;
+        }
       }
+
       if (clockwise) { incrementSetPoint(); }
       else           { decrementSetPoint(); }
 
-      x = offsetX - skew;
-      y = skew - offsetY;
-
+      polar = new_polar;
+      touchDist = 0;
     }
   });
 

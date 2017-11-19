@@ -202,11 +202,20 @@ i.occupied {
 }
 
 i.fan {
+  transform: rotate(60deg);
   font-size: 0.8em;
   color: #00f;
   position: absolute;
   top: 115px;
   left: 25px;
+}
+
+i.fan-button {
+  transform: rotate(60deg);
+  color: #00f;
+  height: 100%;
+  line-height: 34px;
+  display: inline-block;
 }
 
 i.settings {
@@ -223,6 +232,7 @@ i.mode {
   left: 70px;
 }
 
+i.off  { transition: 0.4s; color: #888; }
 i.cool { transition: 0.4s; color: #0bf; } 
 i.heat { transition: 0.4s; color: #900; } 
 div.heat { transition: 0.4s; --box-shadow-color: #f60; background-color: #f60; } 

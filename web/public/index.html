@@ -63,7 +63,7 @@
 
               <div class='mode-buttons-wrapper'>
                 <input type="radio" class='mode-button' id="off" value="off" @change='pushNow' v-model="client_vars.mode">
-                <label for="off"><i class='material-icons'>highlight_off</i></label>
+                <label for="off"><i class='material-icons off'>cancel</i></label>
 
                 <input type="radio" class='mode-button' id="cool" value="cool" @change='pushNow' v-model="client_vars.mode">
                 <label for="cool"><i class='material-icons cool'>ac_unit</i></label>
@@ -75,7 +75,7 @@
               <div class='switch-table'>
                 <div class='switch-row'>
                   <div class='switch-cell'>
-                    <span class='switch-label'>Fan:</span>
+                    <span class='switch-label'><i class='material-icons fan-button'>toys</i></span>
                     <label  class="switch">
                       <input type="checkbox" @change='pushNow' v-model='client_vars.fan' />
                       <span class="slider" :data-before="client_vars.fan ?  'On' : 'Auto'"></span>

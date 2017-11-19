@@ -24,3 +24,6 @@ RUN mkdir /opt/pitherm/data
 
 EXPOSE 8080
 CMD npm start
+
+# FUTURE HEALTHCHECK CMD:
+# echo -ne "HEAD / HTTP/1.0\r\n\r\n" | nc -n -i 1 localhost 8080
