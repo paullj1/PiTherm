@@ -44,7 +44,8 @@ let failedTempRetrievalreturn = 0;
  * SUBSCRIPTION BASED UPDATES
  */
 gun.get('pitherm/server_vars').get('last_occupied').on(function (data) {
-  if (Date(data) + (OCCUPIED_TIMEOUT * 60 * 1000) < Date.now()) {
+  occupied_timeout = new Date(parseInt(data) + (OCCUPIED_TIMEOUT * 60 * 1000));
+  if (occupied_timeout > Date.now()) {                           
     gun.get('pitherm/server_vars').get('occupied').put(true);
     last_occupied_status = true;
   } else {
