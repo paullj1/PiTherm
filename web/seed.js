@@ -3,7 +3,7 @@
  * Author: Paul Jordan <paullj1@gmail.com>
  */
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 80;
 var Gun = require('gun');
 var gun = new Gun(['http://localhost:' + port + '/gun']);
 
@@ -39,5 +39,4 @@ gun.get('pitherm/server_vars').val(function (data) {
     process.exit(0);
   });
 });
-
 

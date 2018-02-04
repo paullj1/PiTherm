@@ -61,11 +61,11 @@ $(document).ready(function() {
   // Initialize gun listeners
   gun.get(client_vars_ref).on(function (data) {
     app.client_vars = data;
-  }, true);
+  }, false);
 
   gun.get(server_vars_ref).on(function (data) {
     app.server_vars = data;
-  }, true);
+  }, false);
 
   $(window).click(function(e) {
     if (e.target == $('#settings-modal')[0]) {

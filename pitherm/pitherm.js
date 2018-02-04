@@ -4,7 +4,7 @@
  */
 
 console.log('Starting PiTherm\'s core...');
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 const host = process.env.HOST || 'localhost';
 const peer = 'http://' + host + ':' + port + '/gun';
 
@@ -43,8 +43,8 @@ let failedTempRetrievalreturn = 0;
 /*
  * SUBSCRIPTION BASED UPDATES
  */
-gun.get('pitherm/browser_vars').get('last_occupied').on(function (data) {
-  if (Date(data) + (OCCUPIED_TIMEOUT * 60 * 1000) > Date.now()) {
+gun.get('pitherm/server_vars').get('last_occupied').on(function (data) {
+  if (Date(data) + (OCCUPIED_TIMEOUT * 60 * 1000) < Date.now()) {
     gun.get('pitherm/server_vars').get('occupied').put(true);
     last_occupied_status = true;
   } else {

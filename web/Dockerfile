@@ -5,7 +5,7 @@ FROM arm32v6/node:alpine
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=5m --timeout=3s \
-  CMD echo -ne "HEAD / HTTP/1.0\r\n\r\n" | nc -n -i 1 localhost 8080
+  CMD echo -ne "HEAD / HTTP/1.0\r\n\r\n" | nc -n -i 1 localhost 80
 
 RUN apk add --no-cache python make g++
 
@@ -22,6 +22,6 @@ ADD package.json server.js /opt/pitherm/
 COPY public/ /opt/pitherm/public/
 RUN mkdir /opt/pitherm/data
 
-EXPOSE 8080
+EXPOSE 80
 CMD npm start
 

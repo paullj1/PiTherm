@@ -1,36 +1,37 @@
-version: "3"
+version: "2"
 services:
   radar:
     build: ./radar/
     restart: always
     env_file: .env
-    network_mode: "host"
+    network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
       options:
-        max-size: 10m
+        max-size: 1m
   pitherm:
     build: ./pitherm/
     restart: always
     env_file: .env
-    network_mode: "host"
+    network_mode: host
     volumes:
       - "/sys/bus/w1/:/sys/bus/w1/"
-    devices:
-      - "/dev/mem:/dev/mem"
-    cap_add:
-      - SYS_RAWIO
+      - type: bind
+        source: "/sys/class/gpio"
+        target: "/sys/class/gpio"
+        read_only: false
+    privileged: true
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
       options:
-        max-size: 10m
+        max-size: 1m
   web:
     build: ./web/
     restart: always
     env_file: .env
-    network_mode: "host"
+    network_mode: host
     ports:
       - "80:80"
     depends_on:
@@ -40,22 +41,20 @@ services:
       - /etc/localtime:/etc/localtime
     logging:
       options:
-        max-size: 10m
+        max-size: 1m
   homebridge:
-    build: ./homebridge/
+    image: oznu/homebridge:raspberry-pi
     restart: always
-    env_file: .env
-    network_mode: "host"
-    ports:
-      - "51826:51826"
-      - "5353:5353"
+    network_mode: host
     volumes:
-      - /etc/localtime:/etc/localtime
-      - ./homebridge/config.json:/root/.homebridge/config.json
-      - ./homebridge/plugins.txt:/root/.homebridge/plugins.txt
+      - ./homebridge:/homebridge
+    environment:
+      - PGID=1000
+      - PUID=1000
+    env_file: .env
     logging:
       options:
-        max-size: 10m
+        max-size: 1m
 
 volumes:
   web:

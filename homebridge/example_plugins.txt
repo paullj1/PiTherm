@@ -1,2 +1,0 @@
-homebridge-pitherm
-homebridge-chamberlain
