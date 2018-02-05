@@ -14,10 +14,6 @@ const fs = require('fs');
 const glob = require('glob');
 const Gpio = require('onoff').Gpio;
 
-const HEAT = new Gpio(23, 'out'); // GPIO pin to turn on heating
-const FAN = new Gpio(24, 'out');  // GPIO pin to turn on fan
-const COOL = new Gpio(25, 'out'); // GPIO pin to turn on cooling
-
 const ON = 0
 const OFF = 1
 const NIGHT = 21    // Hour night begins
@@ -25,11 +21,20 @@ const COOL_DAY = 7  // Hour day begins when cooling is on
 const HEAT_DAY = 5  // Hour day begins when heating is on
 const OCCUPIED_TIMEOUT = 30  // Minutes to wait before changing occupied status
 
+const HEAT = new Gpio(23, 'high'); // GPIO pin to turn on heating
+HEAT.writeSync(OFF);
+
+const FAN = new Gpio(24, 'high');  // GPIO pin to turn on fan
+FAN.writeSync(OFF);
+
+const COOL = new Gpio(25, 'high'); // GPIO pin to turn on cooling
+COOL.writeSync(OFF);
+
 let last_temp = 22;
 let last_setpoint = 22;
 let last_mode = 'off';
 let last_variance = 0.55;
-let last_fan = false;
+let user_fan = false;
 let last_unoccupied_heat_set_point = 22;
 let last_unoccupied_cool_set_point = 22;
 let last_night_occupied_heat_set_point = 22;
@@ -38,7 +43,7 @@ let last_night_occupied_cool_set_point = 22;
 let last_day_occupied_cool_set_point = 22;
 let last_override = false;
 let last_occupied_status = false;
-let failedTempRetrievalreturn = 0;
+let failedTempRetrieval = 0;
 
 /*
  * SUBSCRIPTION BASED UPDATES
@@ -88,7 +93,7 @@ gun.get('pitherm/browser_vars').get('variance').on(function (variance) {
   updateSystem();
 });
 gun.get('pitherm/browser_vars').get('fan').on(function (fan) {
-  last_fan = fan;
+  user_fan = fan;
   updateSystem();
 });
 gun.get('pitherm/browser_vars').get('override').on(function (override) {
@@ -118,13 +123,19 @@ function daytime() {
 
 function heat(on) {
   HEAT.writeSync((on) ? ON : OFF);
-  if (!last_fan) { fan(on); }
+  
+  // Turn compressor on if unit is a heatpump
+  if (process.env.IS_HEATPUMP) {
+    COOL.writeSync((on) ? ON : OFF);
+  }
+
+  if (!user_fan) { fan(on); }
   gun.get('pitherm/server_vars').get('heat_status').put(on);
 }
 
 function cool(on) {
   COOL.writeSync((on) ? ON : OFF);
-  if (!last_fan) { fan(on); }
+  if (!user_fan) { fan(on); }
   gun.get('pitherm/server_vars').get('cool_status').put(on);
 }
 
@@ -134,7 +145,7 @@ function fan(on) {
 }
 
 function checkFail() {
-  failedTempRetrieval++
+  failedTempRetrieval++;
   // If we have failed to get the temperature for 15 minutes, exit...
   if (failedTempRetrieval > 30) { 
     console.log('Failed to retrieve temperature for 15 minutes.  Something is seriously wrong...');
@@ -165,7 +176,7 @@ function updateSystem() {
 
   if      (last_mode == 'cool') { cool(last_temp > (setpoint + last_variance)); }
   else if (last_mode == 'heat') { heat(last_temp < (setpoint - last_variance)); }
-  else if (last_mode == 'off')  { heat(false); cool(false); fan(last_fan); }
+  else if (last_mode == 'off')  { heat(false); cool(false); fan(user_fan); }
 
 }
 
@@ -176,13 +187,13 @@ process.on('exit', (code) => {
 
   clearInterval(pollTemperature);
 
-  HEAT.writeSync(0);
+  HEAT.writeSync(OFF);
   HEAT.unexport();
 
-  COOL.writeSync(0);
+  COOL.writeSync(OFF);
   COOL.unexport();
 
-  FAN.writeSync(0);
+  FAN.writeSync(OFF);
   FAN.unexport();
 
   console.log('Done!  Until next time...');
@@ -192,6 +203,13 @@ const pollTemperature = setInterval(function () {
   glob('/sys/bus/w1/devices/28*/w1_slave', {}, function (err, files) {
     if (err) {
       console.log('ERROR: ', err);
+      console.log(' -- will try again in 30 seconds...');
+      checkFail();
+      return;
+    }
+
+    if ( !(files instanceof Array) || files.length < 1) {
+      console.log('ERROR: couldn\'t read temperature');
       console.log(' -- will try again in 30 seconds...');
       checkFail();
       return;
