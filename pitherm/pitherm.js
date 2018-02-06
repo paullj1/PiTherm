@@ -21,14 +21,14 @@ const COOL_DAY = 7  // Hour day begins when cooling is on
 const HEAT_DAY = 5  // Hour day begins when heating is on
 const OCCUPIED_TIMEOUT = 30  // Minutes to wait before changing occupied status
 
-const HEAT = new Gpio(23, 'high'); // GPIO pin to turn on heating
-HEAT.writeSync(OFF);
+const HEAT_OR_VALVE = new Gpio(23, 'high'); // GPIO pin to turn on reverse valve (or furnace)
+HEAT_OR_VALVE.writeSync(OFF);
 
 const FAN = new Gpio(24, 'high');  // GPIO pin to turn on fan
 FAN.writeSync(OFF);
 
-const COOL = new Gpio(25, 'high'); // GPIO pin to turn on cooling
-COOL.writeSync(OFF);
+const CONDENSER = new Gpio(25, 'high'); // GPIO pin to turn on A/C compressor
+CONDENSER.writeSync(OFF);
 
 let last_temp = 22;
 let last_setpoint = 22;
@@ -89,7 +89,7 @@ gun.get('pitherm/browser_vars').get('day_occupied_cool_set_point').on(function (
   updateSystem();
 });
 gun.get('pitherm/browser_vars').get('variance').on(function (variance) {
-  last_variance = variance;
+  last_variance = parseFloat(variance);
   updateSystem();
 });
 gun.get('pitherm/browser_vars').get('fan').on(function (fan) {
@@ -122,19 +122,30 @@ function daytime() {
 }
 
 function heat(on) {
-  HEAT.writeSync((on) ? ON : OFF);
-  
-  // Turn compressor on if unit is a heatpump
   if (process.env.IS_HEATPUMP) {
-    COOL.writeSync((on) ? ON : OFF);
-  }
+    CONDENSER.writeSync((on) ? ON : OFF);
 
+    // energize reversing valve if necessary
+    if (process.env.HEAT_OR_VALVE == 'heat') {
+      HEAT_OR_VALVE.writeSync((on) ? ON : OFF);
+    }
+
+  } else {
+    HEAT_OR_VALVE.writeSync((on) ? ON : OFF); // would be furnace in non-heatpump setup
+  }
+  
   if (!user_fan) { fan(on); }
   gun.get('pitherm/server_vars').get('heat_status').put(on);
 }
 
 function cool(on) {
-  COOL.writeSync((on) ? ON : OFF);
+  CONDENSER.writeSync((on) ? ON : OFF);
+
+  // energize reversing valve if necessary
+  if (process.env.IS_HEATPUMP && process.env.HEAT_OR_VALVE == 'cool') {
+    HEAT_OR_VALVE.writeSync((on) ? ON : OFF);
+  }
+
   if (!user_fan) { fan(on); }
   gun.get('pitherm/server_vars').get('cool_status').put(on);
 }
@@ -187,11 +198,11 @@ process.on('exit', (code) => {
 
   clearInterval(pollTemperature);
 
-  HEAT.writeSync(OFF);
-  HEAT.unexport();
+  HEAT_OR_VALVE.writeSync(OFF);
+  HEAT_OR_VALVE.unexport();
 
-  COOL.writeSync(OFF);
-  COOL.unexport();
+  CONDENSER.writeSync(OFF);
+  CONDENSER.unexport();
 
   FAN.writeSync(OFF);
   FAN.unexport();
