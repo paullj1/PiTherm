@@ -100,7 +100,7 @@ gun.get('pitherm/browser_vars').get('override').on(function (override) {
   last_override = override;
   updateSystem();
 });
-gun.get('pitherm/browser_vars').get('setpoint').on(function (setpoint) {
+gun.get('pitherm/browser_vars').get('current_setpoint').on(function (setpoint) {
   last_setpoint = setpoint;
   updateSystem();
 });
