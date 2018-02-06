@@ -249,7 +249,7 @@ i.cool { transition: 0.4s; color: #0bf; }
 i.heat { transition: 0.4s; color: #900; } 
 div.heat { transition: 0.4s; --box-shadow-color: #f60; background-color: #f60; } 
 div.cool { transition: 0.4s; --box-shadow-color: #20f; background-color: #20f; } 
-div.on   { transition: 0.4s; --box-shadow-color: #000; background-color: #000; } 
+div.on   { transition: 0.4s; --box-shadow-color: #141; background-color: #141; } 
 div.off  { transition: 0.4s; --box-shadow-color: rgba(0,0,0,0); background-color: rgba(0,0,0,0); } 
 
 .subtext {

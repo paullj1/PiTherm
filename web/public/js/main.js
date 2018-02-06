@@ -11,9 +11,9 @@ var app = new Vue({
     },
     computed: {
       computed_mode () {
-        if (this.server_vars.heat_status == 'on')
+        if (this.server_vars.heat_status == 'true')
           return 'heat';
-        if (this.server_vars.cool_status == 'on') 
+        if (this.server_vars.cool_status == 'true')
           return 'cool';
         if (this.client_vars.mode != 'off')
           return 'on';
