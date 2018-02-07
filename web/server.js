@@ -89,9 +89,9 @@ function get_status(res) {
 }
 
 function set_mode(mode, res) {
-  if (mode == 1) {
+  if (mode == '1') {
     gun.get('pitherm/browser_vars').get('mode').put('heat');
-  } else if (mode == 2) {
+  } else if (mode == '2') {
     gun.get('pitherm/browser_vars').get('mode').put('cool');
   } else {
     gun.get('pitherm/browser_vars').get('mode').put('off');
