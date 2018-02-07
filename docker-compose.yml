@@ -1,56 +1,37 @@
-version: "3"
+version: "2"
 services:
-  db:
-    image: registry.gitlab.com/paullj1/pitherm:db
-    #build: ./db/
-    restart: always
-    env_file: .env
-    network_mode: "host"
-    expose:
-      - "3306"
-    volumes:
-      - "db:/var/lib/mysql"
-      - /etc/localtime:/etc/localtime
-    logging:
-      driver: "${LOGGING}"
-      options:
-        max-size: 10m
   radar:
-    image: registry.gitlab.com/paullj1/pitherm:radar
-    #build: ./radar/
+    build: ./radar/
     restart: always
     env_file: .env
-    network_mode: "host"
+    network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
-        max-size: 10m
+        max-size: 1m
   pitherm:
-    image: registry.gitlab.com/paullj1/pitherm:pitherm
-    #build: ./pitherm/
+    build: ./pitherm/
     restart: always
     env_file: .env
-    network_mode: "host"
+    network_mode: host
     volumes:
       - "/sys/bus/w1/:/sys/bus/w1/"
-    devices:
-      - "/dev/mem:/dev/mem"
-    cap_add:
-      - SYS_RAWIO
+      - type: bind
+        source: "/sys/class/gpio"
+        target: "/sys/class/gpio"
+        read_only: false
+    privileged: true
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
-        max-size: 10m
+        max-size: 1m
   web:
-    image: registry.gitlab.com/paullj1/pitherm:web
-    #build: ./web/
+    build: ./web/
     restart: always
     env_file: .env
-    network_mode: "host"
+    network_mode: host
     ports:
       - "80:80"
     depends_on:
@@ -59,26 +40,21 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     logging:
-      driver: "${LOGGING}"
       options:
-        max-size: 10m
+        max-size: 1m
   homebridge:
-    image: registry.gitlab.com/paullj1/pitherm:homebridg
-    #build: ./homebridge/
+    image: oznu/homebridge:raspberry-pi
     restart: always
-    env_file: .env
-    network_mode: "host"
-    ports:
-      - "51826:51826"
-      - "5353:5353"
+    network_mode: host
     volumes:
-      - /etc/localtime:/etc/localtime
-      - ./homebridge/config.json:/root/.homebridge/config.json
-      - ./homebridge/plugins.txt:/root/.homebridge/plugins.txt
+      - ./homebridge:/homebridge
+    environment:
+      - PGID=1000
+      - PUID=1000
+    env_file: .env
     logging:
-      driver: "${LOGGING}"
       options:
-        max-size: 10m
+        max-size: 1m
 
 volumes:
-  db:
+  web:

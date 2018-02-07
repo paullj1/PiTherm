@@ -1,0 +1,33 @@
+{
+  "name": "pitherm-core",
+  "version": "0.0.1",
+  "description": "Raspberry Pi thermostat app.",
+  "main": "pitherm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node pitherm.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paullj1/pitherm.git"
+  },
+  "keywords": [
+    "Raspbery",
+    "Pi",
+    "Thermostat",
+    "GPIO",
+    "Node"
+  ],
+  "author": "Paul Jordan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paullj1/pitherm/issues"
+  },
+  "homepage": "https://github.com/paullj1/pitherm#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "glob": "^7.1.2",
+    "gun": "^0.8.8",
+    "onoff": "^1.1.8"
+  }
+}

@@ -1,15 +1,27 @@
-# PiTherm's web front end UI
+# PiTherm Dockerfile
 # VERSION 1.0
 
-FROM nidorpi/rpi-php:7.0-apache
+FROM arm32v6/node:alpine
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
-HEALTHCHECK --interval=1m --timeout=5s \
-  CMD curl -f http://localhost/ || exit 1
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD echo -ne "HEAD / HTTP/1.0\r\n\r\n" | nc -n -i 1 localhost 80
 
-RUN docker-php-ext-install mysqli
-RUN a2enmod rewrite
+RUN apk add --no-cache python make g++
 
-COPY ./www/ /var/www/html/
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
+
+RUN mkdir -p /opt/pitherm/ && \
+    mv /tmp/node_modules /opt/pitherm/
+
+VOLUME /opt/pitherm/
+WORKDIR /opt/pitherm/
+
+ADD package.json server.js /opt/pitherm/
+COPY public/ /opt/pitherm/public/
+RUN mkdir /opt/pitherm/data
 
 EXPOSE 80
+CMD npm start
+

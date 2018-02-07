@@ -1,0 +1,30 @@
+{
+  "name": "pitherm-radar",
+  "version": "0.0.1",
+  "description": "Raspberry Pi thermostat app radar module.",
+  "main": "radar.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node radar.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paullj1/pitherm.git"
+  },
+  "keywords": [
+    "Raspbery",
+    "Pi",
+    "Thermostat",
+    "GPIO",
+    "Node"
+  ],
+  "author": "Paul Jordan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paullj1/pitherm/issues"
+  },
+  "homepage": "https://github.com/paullj1/pitherm#readme",
+  "dependencies": {
+    "gun": "^0.8.8"
+  }
+}

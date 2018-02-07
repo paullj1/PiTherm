@@ -1,3 +1,0 @@
-MySQL-python==1.2.5
-RPi.GPIO==0.5.11
-requests==2.13.0

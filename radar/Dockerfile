@@ -1,24 +1,19 @@
-# PiTherm Radar Dockerfile
+# PiTherm Dockerfile
 # VERSION 1.0
 
-FROM resin/rpi-raspbian:jessie
+FROM arm32v6/node:alpine
 MAINTAINER Paul Jordan <paullj1@gmail.com>
 
 HEALTHCHECK --interval=5m --timeout=3s \
-  CMD ps aux | grep -v grep | grep radar.py || exit 1
+  CMD ps aux | grep -v grep | grep radar.js || exit 1
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        python \
-        python-dev \
-        python-pip \
-        gcc \
-        libmysqlclient-dev \
-        arping \
-    && rm -rf /var/lib/apt/lists/*
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
 
-RUN mkdir /radar
-ADD radar.py libradar.py requirements.txt /radar/
-RUN pip install -r /radar/requirements.txt
+RUN mkdir -p /opt/pitherm-radar/ && \
+    mv /tmp/node_modules /opt/pitherm-radar/
 
-CMD [ "python", "/radar/radar.py" ]
+WORKDIR /opt/pitherm-radar/
+ADD package.json radar.js /opt/pitherm-radar/
+
+CMD npm start

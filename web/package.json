@@ -1,0 +1,37 @@
+{
+  "name": "pitherm-web",
+  "version": "0.0.1",
+  "description": "Raspberry Pi thermostat app web front end.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "seed": "node seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paullj1/pitherm.git"
+  },
+  "keywords": [
+    "Raspbery",
+    "Pi",
+    "Thermostat",
+    "GPIO",
+    "Node"
+  ],
+  "author": "Paul Jordan",
+  "license": "(MIT)",
+  "bugs": {
+    "url": "https://github.com/paullj1/pitherm/issues"
+  },
+  "homepage": "https://github.com/paullj1/pitherm#readme",
+  "dependencies": {
+    "finalhandler": "^1.1.0",
+    "gun": "^0.6.5",
+    "encoding-down": "^2.3.4",
+    "leveldown": "^2.0.0",
+    "levelup": "^2.0.0",
+    "gun-level": "^6.0.4",
+    "serve-static": "^1.13.1"
+  }
+}

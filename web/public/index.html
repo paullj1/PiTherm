@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>PiTherm</title>
+    
+    <script src="/js/gun.min.js"></script>
+    <script src="/js/lodash.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+
+    <link href="/css/styles.css" rel="stylesheet">
+    <link href="/css/googlefonts.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div id="app">
+      <div class='console'>
+        <div class='header'>
+          <h1>Pi Therm</h1>
+        </div>
+        <div id='setpoint-wheel'>
+          <div id='grip-wheel'>
+            <img src='/images/grip-wheel.svg'></img>
+          </div>
+          <div id='messages'>
+            <p class='message'>
+              Presence Mode Active<br />
+              Disable to change setpoint
+            </p>
+          </div>
+          <div id='main-window' class='info-window' :class="computed_mode">
+            <div id='setpoint'    class='temperature setpoint' :class="units_class">
+              {{ current_setpoint }}
+              <span class='units' :class='units_class'>&deg; {{ client_vars.units ? 'C' : 'F' }}</span>
+              <div class='subtext'>Setpoint</div>
+            </div>
+            <div id='indoor-temp' class='temperature indoor-temp' :class="units_class">
+              {{ current_temp }}                                  
+              <span class='units' :class='units_class'>&deg; {{ client_vars.units ? 'C' : 'F' }}</span>
+            </div>
+            
+            <i @click='showSettings' class='material-icons settings'>settings</i>
+            <transition name='fade'>
+              <i v-if="client_vars.mode != 'off'" :class='client_vars.mode' class='material-icons mode'>{{ client_vars.mode == "cool" ? "ac_unit" : "whatshot" }}</i>
+            </transition>
+            <transition name='fade'>
+              <i v-if="client_vars.fan" class='material-icons fan'>toys</i>
+            </transition>
+            <transition name='fade'>
+              <i v-if="server_vars.occupied" class='material-icons occupied'>home</i>
+            </transition>
+          </div>
+        </div>
+
+        <transition name="fade">
+          <div v-if="settings_visible" class='modal' id='settings-modal'>
+            <div id='settings-win'>
+              <i class='material-icons close' @click='settings_visible = false'>close</i>
+              <h3 class='title'>
+                PiTherm Settings 
+              </h3>
+
+              <div class='mode-buttons-wrapper'>
+                <input type="radio" class='mode-button' id="off" value="off" @change='pushNow' v-model="client_vars.mode">
+                <label for="off"><i class='material-icons off'>cancel</i></label>
+
+                <input type="radio" class='mode-button' id="cool" value="cool" @change='pushNow' v-model="client_vars.mode">
+                <label for="cool"><i class='material-icons cool'>ac_unit</i></label>
+
+                <input type="radio" class='mode-button' id="heat" value="heat" @change='pushNow' v-model="client_vars.mode">
+                <label for="heat"><i class='material-icons heat'>whatshot</i></label>
+              </div>
+
+              <div class='switch-table'>
+                <div class='switch-row'>
+                  <div class='switch-cell'>
+                    <span class='switch-label'><i class='material-icons fan-button'>toys</i></span>
+                    <label  class="switch">
+                      <input type="checkbox" @change='pushNow' v-model='client_vars.fan' />
+                      <span class="slider" :data-before="client_vars.fan ?  'On' : 'Auto'"></span>
+                    </label>
+                  </div>
+
+                  <div class='switch-cell'>
+                    <span class='switch-label'>Units:</span>
+                    <label  class="switch">
+                      <input type="checkbox" @change='pushNow' v-model='client_vars.units' />
+                      <span class="slider no-color" :data-before="client_vars.units ? 'C' : 'F'"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <fieldset>
+                <div class='form-group'>
+                  <span class='switch-label'>Presence Mode:</span>
+                  <label  class="switch">
+                    <input type="checkbox" @change='pushNow' v-model='client_vars.override' />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <fieldset>
+                  <legend>Unoccupied Setpoints</legend>
+                  <div class='form-group'>
+                    <label for='unoccupied_heat_set_point'>Heat:
+                      <span class='setpoint-var' :style='color(client_vars.unoccupied_heat_set_point)'>{{ unoccupied_heat_set_point }}</span>
+                    </label>
+                    <div class="slidecontainer">
+                      <input type="range" min="4.44" max="37.22" step="0.55" @change='pushNow' v-model="client_vars.unoccupied_heat_set_point" class="rangeslider" id="unoccupied_heat_set_point" />
+                    </div>
+                  </div>
+                  
+                  <div class='form-group'>
+                    <label for='unoccupied_cool_set_point'>Cool:
+                      <span class='setpoint-var' :style='color(client_vars.unoccupied_cool_set_point)'>{{ unoccupied_cool_set_point }}</span>
+                    </label>
+                    <div class="slidecontainer">
+                      <input type='range' min='4.44' max='37.22' step='0.55' id='unoccupied_cool_set_point' @change='pushNow' v-model='client_vars.unoccupied_cool_set_point' class='rangeslider' />
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend>Occupied Evening Setpoints</legend>
+                  <div class='form-group'>
+                    <label for='night_occupied_heat_set_point'>Heat:
+                      <span class='setpoint-var' :style='color(client_vars.night_occupied_heat_set_point)'>{{ night_occupied_heat_set_point }}</span>
+                    </label>
+                    <div class="slidecontainer">
+                      <input type='range' min='4.44' max='37.22' step='0.55' id='night_occupied_heat_set_point' @change='pushNow' v-model='client_vars.night_occupied_heat_set_point' class='rangeslider' />
+                    </div>
+                  </div>
+
+                  <div class='form-group'>
+                    <label for='night_occupied_cool_set_point'>Cool:
+                      <span class='setpoint-var' :style='color(client_vars.night_occupied_cool_set_point)'>{{ night_occupied_cool_set_point }}</span>
+                    </label>
+                    <div class="slidecontainer">
+                      <input type='range' min='4.44' max='37.22' step='0.55' id='night_occupied_cool_set_point' @change='pushNow' v-model='client_vars.night_occupied_cool_set_point' class='rangeslider' />
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend>Occupied Daytime Setpoints</legend>
+                  <div class='form-group'>
+                    <label for='day_occupied_heat_set_point'>Heat:
+                      <span class='setpoint-var' :style='color(client_vars.day_occupied_heat_set_point)'>{{ day_occupied_heat_set_point }}</span>
+                    </label>
+                    <div class="slidecontainer">
+                      <input type='range' min='4.44' max='37.22' step='0.55' id='day_occupied_heat_set_point' @change='pushNow' v-model='client_vars.day_occupied_heat_set_point' class='rangeslider' />
+                    </div>
+                  </div>
+
+                  <div class='form-group'>
+                    <label for='day_occupied_cool_set_point'>Cool:
+                      <span class='setpoint-var' :style='color(client_vars.day_occupied_cool_set_point)'>{{ day_occupied_cool_set_point }}</span>
+                    </label>
+                    <div class="slidecontainer">
+                      <input type='range' min='4.44' max='37.22' step='0.55' id='day_occupied_cool_set_point' @change='pushNow' v-model='client_vars.day_occupied_cool_set_point' class='rangeslider' />
+                    </div>
+                  </div>
+                </fieldset>
+
+                <div class='form-group'>
+                  <label   for='ip_addresses'>IP Addresses:</label>
+                  <textarea id='ip_addresses' @input='pushDebounce' v-model='client_vars.ip_addresses'></textarea>
+                </div>
+              </fieldset>
+
+            </div>
+          </div>
+        </transition>
+      </div>
+    </div>
+  </body>
+  <script src="/js/vue.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/main.js"></script>
+</html>
