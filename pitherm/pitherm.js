@@ -191,7 +191,7 @@ function updateSystem() {
       if (last_mode == 'cool') { setpoint = last_unoccupied_cool_set_point; }
       if (last_mode == 'heat') { setpoint = last_unoccupied_heat_set_point; }
     }
-    gun.get('pitherm/server_vars').get('current_setpoint').put(setpoint);
+    gun.get('pitherm/browser_vars').get('current_setpoint').put(setpoint);
   }
 
   if      (last_mode == 'cool') { cool(last_temp > (setpoint + (system_on ? 0 : last_variance))); }
