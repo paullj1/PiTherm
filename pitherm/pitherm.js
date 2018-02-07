@@ -44,6 +44,7 @@ let last_day_occupied_cool_set_point = 22;
 let last_override = false;
 let last_occupied_status = false;
 let failedTempRetrieval = 0;
+let system_on = false;
 
 /*
  * SUBSCRIPTION BASED UPDATES
@@ -136,6 +137,10 @@ function heat(on) {
   
   if (!user_fan) { fan(on); }
   gun.get('pitherm/server_vars').get('heat_status').put(on);
+
+  // Track state for use of variance variable
+  if (on && !system_on) { system_on = true; }
+  if (!on && system_on) { system_on = false; }
 }
 
 function cool(on) {
@@ -148,6 +153,10 @@ function cool(on) {
 
   if (!user_fan) { fan(on); }
   gun.get('pitherm/server_vars').get('cool_status').put(on);
+
+  // Track state for use of variance variable
+  if (on && !system_on) { system_on = true; }
+  if (!on && system_on) { system_on = false; }
 }
 
 function fan(on) {
@@ -185,8 +194,8 @@ function updateSystem() {
     gun.get('pitherm/server_vars').get('setpoint').put(setpoint);
   }
 
-  if      (last_mode == 'cool') { cool(last_temp > (setpoint + last_variance)); }
-  else if (last_mode == 'heat') { heat(last_temp < (setpoint - last_variance)); }
+  if      (last_mode == 'cool') { cool(last_temp > (setpoint + (system_on ? 0 : last_variance))); }
+  else if (last_mode == 'heat') { heat(last_temp < (setpoint - (system_on ? 0 : last_variance))); }
   else if (last_mode == 'off')  { heat(false); cool(false); fan(user_fan); }
 
 }
