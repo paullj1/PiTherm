@@ -16,6 +16,7 @@ homebridge/node_modules
 homebridge/persist
 homebridge/package-lock.json
 homebridge/startup.sh
+homebridge/accessories
 
 node_modules
 
