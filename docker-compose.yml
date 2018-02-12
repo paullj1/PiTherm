@@ -48,6 +48,7 @@ services:
     network_mode: host
     volumes:
       - ./homebridge:/homebridge
+      - /etc/hostname:/etc/hostname
     environment:
       - PGID=1000
       - PUID=1000
