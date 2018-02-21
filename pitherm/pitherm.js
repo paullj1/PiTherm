@@ -127,7 +127,7 @@ function heat(on) {
     CONDENSER.writeSync((on) ? ON : OFF);
 
     // energize reversing valve if necessary
-    if (process.env.HEAT_OR_VALVE == 'heat') {
+    if (process.env.REVERSE_VALVE == 'heat') {
       HEAT_OR_VALVE.writeSync((on) ? ON : OFF);
     }
 
@@ -147,7 +147,7 @@ function cool(on) {
   CONDENSER.writeSync((on) ? ON : OFF);
 
   // energize reversing valve if necessary
-  if (process.env.IS_HEATPUMP && process.env.HEAT_OR_VALVE == 'cool') {
+  if (process.env.IS_HEATPUMP && process.env.REVERSE_VALVE == 'cool') {
     HEAT_OR_VALVE.writeSync((on) ? ON : OFF);
   }
 

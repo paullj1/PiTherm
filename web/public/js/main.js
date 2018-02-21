@@ -81,6 +81,7 @@ $(document).ready(function() {
   var scrollDist = 0;
   var messages_win_visible = false;
 
+  $('#grip-wheel').on('contextmenu', 'img', function(e){  e.preventDefault(); e.stopPropagation(); return false;  });
   $('#grip-wheel').on('mouseenter', transitionToSetpoint);
   $('#grip-wheel').on('mouseleave', transitionToCurrentTemp);
 
@@ -149,7 +150,7 @@ $(document).ready(function() {
     if (new_polar.radius < 50 || new_polar.radius > 180) { return; }
 
     touchDist += (polar.theta - new_polar.theta);
-    if (flag == 1 && Math.abs(touchDist) > 30) {
+    if (flag == 1 && Math.abs(touchDist) > 180) {
 
       var clockwise = true;
       // Handle crossover
