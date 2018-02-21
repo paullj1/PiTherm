@@ -1,11 +1,10 @@
 # PiTherm
 PiTherm is a docker-compose service built for Raspberry Pi.  With $15 in hardware (in addition to the Pi), PiTherm turns your Pi into a smart thermostat that can be controlled using Siri with [Homebridge](https://github.com/nfarina/homebridge) or on your smartphone with the built-in web interface.  Additionally, PiTherm can be configured to detect the presence of your smartphone and set your AC or furnace to a more energy efficient set-point when you're not home.
 
-![Cool Demo](https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/cool.gif)
-![Heat Demo](https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/heat.gif)
-![Fan Demo](https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/fan.gif)
-![Sync Demo](https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/sync.gif)
-
+<img src='https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/cool.gif' width='33%'></img>
+<img src='https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/heat.gif' width='33%'></img>
+<img src='https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/fan.gif' width='33%'></img>
+<img src='https://raw.githubusercontent.com/paullj1/PiTherm/master/docs/sync.gif'></img>
 
 Steps to Install (from rasbian):
 ---
