@@ -46,7 +46,7 @@
               <i v-if="client_vars.mode != 'off'" :class='client_vars.mode' class='material-icons mode'>{{ client_vars.mode == "cool" ? "ac_unit" : "whatshot" }}</i>
             </transition>
             <transition name='fade'>
-              <i v-if="client_vars.fan" class='material-icons fan'>toys</i>
+              <i v-if="client_vars.fan_status" class='material-icons fan'>toys</i>
             </transition>
             <transition name='fade'>
               <i v-if="server_vars.occupied" class='material-icons occupied'>home</i>

@@ -34,7 +34,7 @@ let last_temp = 22;
 let last_setpoint = 22;
 let last_mode = 'off';
 let last_variance = 0.55;
-let user_fan = false;
+let user_fan = 'Auto';
 let last_unoccupied_heat_set_point = 22;
 let last_unoccupied_cool_set_point = 22;
 let last_night_occupied_heat_set_point = 22;
@@ -135,7 +135,7 @@ function heat(on) {
     HEAT_OR_VALVE.writeSync((on) ? ON : OFF); // would be furnace in non-heatpump setup
   }
   
-  if (!user_fan) { fan(on); }
+  if (user_fan == 'Auto') { fan(on); }
   gun.get('pitherm/server_vars').get('heat_status').put(on);
 
   // Track state for use of variance variable
@@ -151,7 +151,7 @@ function cool(on) {
     HEAT_OR_VALVE.writeSync((on) ? ON : OFF);
   }
 
-  if (!user_fan) { fan(on); }
+  if (user_fan == 'Auto') { fan(on); }
   gun.get('pitherm/server_vars').get('cool_status').put(on);
 
   // Track state for use of variance variable
@@ -196,7 +196,7 @@ function updateSystem() {
 
   if      (last_mode == 'cool') { cool(last_temp > (setpoint + (system_on ? 0 : last_variance))); }
   else if (last_mode == 'heat') { heat(last_temp < (setpoint - (system_on ? 0 : last_variance))); }
-  else if (last_mode == 'off')  { heat(false); cool(false); fan(user_fan); }
+  else if (last_mode == 'off')  { heat(false); cool(false); fan(user_fan == 'Auto' ? false : true); }
 
 }
 
